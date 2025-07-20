@@ -24,7 +24,7 @@ public class JokeService {
         List<Joke> jokes = this.jsonReader.getJokes();
         Random generator = new Random();
         int randomIndex = generator.nextInt(jokes.size());
-        logger.info("Returning joke number: {}", randomIndex);
+        logger.info("Retourne numéro de la blague: {}", randomIndex);
         return jokes.get(randomIndex);
     }
 }

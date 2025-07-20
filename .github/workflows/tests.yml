@@ -5,10 +5,10 @@ name: Run Tests
 on:
   # Se déclenche lors d'un push sur la branche master
   push:
-    branches: [ master ]
+    branches: [ main ]
   # Se déclenche lors d'une pull request vers la branche master
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 # Liste des jobs à exécuter
 jobs:

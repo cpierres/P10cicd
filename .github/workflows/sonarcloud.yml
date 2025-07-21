@@ -15,10 +15,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Configuration JDK 11
+      - name: Configuration JDK 17 #SonarCloud a besoin de java17 !
         uses: actions/setup-java@v3
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'adopt'
           cache: maven
 

@@ -97,7 +97,7 @@ jobs:
 
       # Téléverse les rapports de couverture générés comme artefact dans GitHub
       - name: Upload coverage report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           # Nom de l'artefact qui sera visible dans l'interface GitHub
           name: angular-coverage

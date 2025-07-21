@@ -7,11 +7,8 @@ on:
     branches: [ main ]
 
 jobs:
-  sonarcloud-backend:
+  sonarcloud:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./back
 
     steps:
       - uses: actions/checkout@v4
@@ -25,30 +22,13 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
-      - name: Cache des packages SonarCloud
-        uses: actions/cache@v3
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
+      # Exécution des tests backend et génération des rapports
+      - name: Build et test backend
+        run: |
+          cd back
+          mvn -B verify org.jacoco:jacoco-maven-plugin:prepare-agent test jacoco:report
 
-      - name: Construction et analyse
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=bobapp-backend -Dsonar.organization=cpierres -Dsonar.host.url=https://sonarcloud.io
-
-  sonarcloud-frontend:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./front
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
+      # Configuration Node.js pour le frontend
       - name: Configuration Node.js
         uses: actions/setup-node@v3
         with:
@@ -56,20 +36,16 @@ jobs:
           cache: 'npm'
           cache-dependency-path: './front/package-lock.json'
 
-      - name: Installation des dépendances
-        run: npm ci
+      # Exécution des tests frontend et génération des rapports
+      - name: Build et test frontend
+        run: |
+          cd front
+          npm ci
+          npm test -- --no-watch --no-progress --browsers=ChromeHeadless --code-coverage
 
-      - name: Exécution des tests avec couverture
-        run: npm test -- --no-watch --no-progress --browsers=ChromeHeadless --code-coverage
-
+      # Analyse SonarCloud
       - name: Analyse SonarCloud
         uses: SonarSource/sonarcloud-github-action@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          projectBaseDir: front
-          args: >
-            -Dsonar.projectKey=bobapp-frontend
-            -Dsonar.organization=cpierres
-            -Dsonar.javascript.lcov.reportPaths=coverage/bobapp/lcov.info

@@ -93,7 +93,7 @@ jobs:
       # --browsers=ChromeHeadless : utilise Chrome en mode headless (sans interface graphique)
       # --code-coverage : génère des rapports de couverture de code
       - name: Run tests
-        run: npm test -- --no-watch --no-progress --browsers=ChromeHeadless --code-coverage
+        run: npm test --no-watch --no-progress --browsers=ChromeHeadless --code-coverage
 
       # Téléverse les rapports de couverture générés comme artefact dans GitHub
       - name: Upload coverage report

@@ -1,0 +1,7 @@
+# Le fichier CODEOWNERS lui-même ne peut être modifié que par l'administrateur
+CODEOWNERS @cpierres
+
+# Définit cpierres comme reviewer pour tous les fichiers du projet
+* @cpierres
+
+

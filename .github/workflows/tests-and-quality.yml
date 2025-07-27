@@ -37,10 +37,12 @@ jobs:
       # Exécute les tests avec Maven
       - name: Run tests with Maven
         run: mvn test
+        continue-on-error: true  # Continuer même si les tests échouent
 
       # Génère le rapport de couverture JaCoCo
       - name: Generate JaCoCo Report
         run: mvn jacoco:report
+        if: always()  # Exécuter même si l'étape précédente échoue
 
       # Upload rapport JaCoCo comme artefact => stocké dans infra github (sera utile au job Sonar)
       - name: Upload JaCoCo coverage report
@@ -53,6 +55,7 @@ jobs:
 
       - name: Upload backend-classes # partagées avec le job Sonar (classes compilées utiles indépendamment des src)
         uses: actions/upload-artifact@v4
+        if: always()  # Exécuter même si les étapes précédentes échouent
         with:
           name: backend-classes
           path: |

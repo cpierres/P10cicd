@@ -1,0 +1,78 @@
+name: SonarCloud Analysis
+
+on:
+  # Se déclenche après l'exécution des workflows de tests (backend et frontend qui se sont exécutés en parallèle)
+  workflow_run:
+    workflows: ["Backend Tests", "Frontend Tests"]
+    types:
+      - completed
+    branches: [main]
+  # Se déclenche lors d'une PR vers la branche main (pour avoir un feedback rapide)
+  pull_request:
+    branches: [ main ]
+  # Permet de déclencher manuellement le workflow depuis l'interface GitHub
+  workflow_dispatch:
+
+# Liste des jobs à exécuter
+jobs:
+  # Analyse SonarCloud avec JDK 17 (version minimale obligatoire) => différente du backend d'où le job séparé
+  sonarcloud-analysis:
+    # N'exécuter que si les workflows de tests ont réussi ou ont été ignorés (si les fichiers correspondants n'ont pas été modifiés)
+    # Ou si le workflow est déclenché manuellement ou par une PR
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'pull_request' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Utile car permet à Sonar d'effectuer des comparaisons (compare PR à branche cible + analyse incrémentale)
+
+      - name: Configuration JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'  # SonarCloud nécessite Java 17 minimum
+          distribution: 'adopt'
+      
+      # Téléchargement des artefacts générés lors des tests backend
+      # Utilise une action spéciale pour télécharger des artefacts d'autres workflows
+      - name: Téléchargement du rapport JaCoCo
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: Backend Tests
+          name: jacoco-report
+          path: back/target/site/jacoco/
+          workflow_conclusion: success
+          if_no_artifact_found: ignore  # Ne pas échouer si l'artefact n'existe pas (cas où le workflow backend n'a pas été exécuté)
+
+      - name: Téléchargement des classes backend
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: Backend Tests
+          name: backend-classes
+          path: back/target/
+          workflow_conclusion: success
+          if_no_artifact_found: ignore  # Ne pas échouer si l'artefact n'existe pas
+      
+      # Téléchargement des artefacts générés lors des tests frontend
+      - name: Téléchargement du rapport de couverture Angular
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: Frontend Tests
+          name: angular-coverage
+          path: front/coverage/
+          workflow_conclusion: success
+          if_no_artifact_found: ignore  # Ne pas échouer si l'artefact n'existe pas
+      
+      # Analyse SonarCloud
+      - name: Analyse SonarCloud
+        uses: SonarSource/sonarqube-scan-action@v5.3.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
+      
+      # Affiche un lien vers le rapport SonarCloud
+      - name: Lien SonarCloud
+        if: always()  # Exécuter même si l'étape précédente échoue
+        run: |
+          echo "**Rapport SonarCloud :** https://sonarcloud.io/project/overview?id=${{ github.repository_owner }}_${{ github.event.repository.name }}"

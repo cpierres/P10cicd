@@ -136,6 +136,15 @@ jobs:
           # Chemin vers le dossier contenant les rapports de couverture générés
           path: front/coverage/
 
+      # Rapport LCOV pour le frontend
+      - name: Frontend Coverage Report
+        uses: romeovs/lcov-reporter-action@v0.4.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          lcov-file: front/coverage/lcov.info
+          title: Frontend Coverage Report
+
+
   # Analyse SonarCloud avec JDK 17 (version minimale obligatoire)
   sonarcloud-analysis:
     needs: [backend-tests, frontend-tests]

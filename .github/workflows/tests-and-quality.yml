@@ -89,14 +89,6 @@ jobs:
           report_paths: '**/target/surefire-reports/TEST-*.xml'  # Chemin des rapports
           fail_on_failure: false
 
-      - name: Test Report
-        uses: phoenix-actions/test-reporting@v8
-        if: success() || failure()
-        with:
-          name: Tests Backend
-          path: back/target/surefire-reports/*.xml
-          reporter: java-junit
-
   frontend-tests:
     runs-on: ubuntu-latest
     # Configure le répertoire de travail par défaut pour les commandes

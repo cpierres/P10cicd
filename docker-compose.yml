@@ -1,0 +1,30 @@
+version: '3.9'
+
+services:
+  bobapp-back:
+    build:
+      context: ./back
+    container_name: bobapp-back
+    ports:
+      - "8080:8080"
+    networks:
+      - bobapp-network
+    restart: unless-stopped
+
+  bobapp-front:
+    build:
+      context: ./front
+    container_name: bobapp-front
+    ports:
+      - "80:80"
+    depends_on:
+      - bobapp-back
+    networks:
+      - bobapp-network
+    #volumes:
+    #  - ./front/nginx-docker.conf:/etc/nginx/conf.d/default.conf
+    restart: unless-stopped
+
+networks:
+  bobapp-network:
+    name: bobapp-network

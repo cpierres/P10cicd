@@ -34,9 +34,13 @@ jobs:
           distribution: 'adopt'
           cache: maven           # Active le cache Maven (survit à la destruction du container)
 
-      # Exécute les tests avec Maven
+      # compilation séparée pour plus de lisibilité
+      - name: Build project
+        run: mvn compile test-compile #note : clean initial ne servirait pas puisque démarre vierge
+
+      # Exécute les tests avec Maven (pas de tests d'intégration dans cette appli donc mvn verify inutile)
       - name: Run tests with Maven
-        run: mvn clean test
+        run: mvn test
         continue-on-error: true  # Continuer même si les tests échouent
 
       # Génère le rapport de couverture JaCoCo
@@ -53,7 +57,7 @@ jobs:
           path: back/target/site/jacoco/  # Chemin vers les rapports
           retention-days: 1  # inutile de garder plus d'1 jour
 
-       # Afficher le rapport et faire échouer une PR éventuellement si au-delà d'un seuil
+       # Afficher le rapport et faire échouer PR éventuellement si en-dessous d'un seuil
       - name: JaCoCo Code Coverage Report
         id: jacoco_reporter
         uses: PavanMudigonda/jacoco-reporter@v5.0
@@ -111,7 +115,7 @@ jobs:
       # Installe les dépendances du projet frontend
       # 'npm ci' est similaire à 'npm install' mais plus strict et adapté aux environnements CI
       - name: Install dependencies
-        run: npm ci
+        run: npm ci # fait install et le build
 
       # Exécute les tests du frontend avec les options spécifiées :
       # --no-watch : ne surveille pas les changements de fichiers (mode CI)

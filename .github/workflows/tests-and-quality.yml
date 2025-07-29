@@ -36,7 +36,7 @@ jobs:
 
       # Exécute les tests avec Maven
       - name: Run tests with Maven
-        run: mvn test
+        run: mvn clean test
         continue-on-error: true  # Continuer même si les tests échouent
 
       # Génère le rapport de couverture JaCoCo
@@ -52,6 +52,21 @@ jobs:
           name: jacoco-report    # Nom de l'artefact
           path: back/target/site/jacoco/  # Chemin vers les rapports
           retention-days: 1  # inutile de garder plus d'1 jour
+
+       # Afficher le rapport pour les PR et la faire échouer éventuellement si au-delà d'un seuil
+      - name: JaCoCo Code Coverage Report
+        id: jacoco_reporter
+        uses: PavanMudigonda/jacoco-reporter@v5.0
+        if: always()  # Exécuter même si les étapes précédentes échouent
+        with:
+          coverage_results_path: back/target/site/jacoco/jacoco.xml
+          coverage_report_name: Coverage
+          coverage_report_title: JaCoCo Coverage Report
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          skip_check_run: false
+          minimum_coverage: 80
+          fail_below_threshold: false
+          publish_only_summary: false
 
       - name: Upload backend-classes # partagées avec le job Sonar (classes compilées utiles indépendamment des src)
         uses: actions/upload-artifact@v4

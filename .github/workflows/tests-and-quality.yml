@@ -137,13 +137,21 @@ jobs:
           path: front/coverage/
 
       # Rapport LCOV pour le frontend
+#      - name: Frontend Coverage Report
+#        uses: romeovs/lcov-reporter-action@v0.4.0
+#        with:
+#          github-token: ${{ secrets.GITHUB_TOKEN }}
+#          lcov-file: front/coverage/lcov.info
+#          title: Frontend Coverage Report
       - name: Frontend Coverage Report
-        uses: romeovs/lcov-reporter-action@v0.4.0
+        uses: zgosalvez/github-actions-report-lcov@v4.1.26
+        if: always()
         with:
+          coverage-files: front/coverage/lcov.info
+          minimum-coverage: 60
+          artifact-name: frontend-coverage-report
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          lcov-file: front/coverage/lcov.info
-          title: Frontend Coverage Report
-
+          working-directory: front
 
   # Analyse SonarCloud avec JDK 17 (version minimale obligatoire)
   sonarcloud-analysis:

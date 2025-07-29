@@ -182,4 +182,4 @@ jobs:
       - name: Lien SonarCloud
         if: always()
         run: |
-          echo "::notice title=📊 Rapport SonarCloud::https://sonarcloud.io/project/overview?id=${{ github.repository_owner }}_${{ github.event.repository.name }}"
+          echo "**Rapport SonarCloud :** https://sonarcloud.io/project/overview?id=${{ github.repository_owner }}_${{ github.event.repository.name }}"

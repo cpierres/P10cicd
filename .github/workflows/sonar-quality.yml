@@ -1,5 +1,9 @@
 name: SonarCloud Analysis
 
+permissions:
+  actions: read
+  contents: read
+
 on:
   # Se déclenche après l'exécution des workflows de tests (backend et frontend qui se sont exécutés en parallèle)
   workflow_run:

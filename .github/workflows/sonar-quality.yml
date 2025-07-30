@@ -36,7 +36,7 @@ jobs:
       # Téléchargement des artefacts générés lors des tests backend
       # Utilise une action spéciale pour télécharger des artefacts d'autres workflows
       - name: Téléchargement du rapport JaCoCo
-        uses: dawidd6/action-download-artifact@v2
+        uses: dawidd6/action-download-artifact@v11
         with:
           workflow: Backend Tests
           name: jacoco-report
@@ -45,7 +45,7 @@ jobs:
           if_no_artifact_found: ignore  # Ne pas échouer si l'artefact n'existe pas (cas où le workflow backend n'a pas été exécuté)
 
       - name: Téléchargement des classes backend
-        uses: dawidd6/action-download-artifact@v2
+        uses: dawidd6/action-download-artifact@v11
         with:
           workflow: Backend Tests
           name: backend-classes
@@ -55,7 +55,7 @@ jobs:
       
       # Téléchargement des artefacts générés lors des tests frontend
       - name: Téléchargement du rapport de couverture Angular
-        uses: dawidd6/action-download-artifact@v2
+        uses: dawidd6/action-download-artifact@v11
         with:
           workflow: Frontend Tests
           name: angular-coverage

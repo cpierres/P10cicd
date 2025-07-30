@@ -1,9 +1,9 @@
 name: Build and Push Docker Images
 
 on:
-  # Ne se déclenche plus sur un push direct, mais uniquement après l'exécution du workflow "SonarCloud Analysis"
+  # ne se déclenche plus sur un push direct, mais uniquement après l'exécution du workflow "Run Tests"
   workflow_run:
-    workflows: ["SonarCloud Analysis"]  # Nom exact du workflow sonar-quality.yml
+    workflows: ["Run Tests"]  # Nom exact du workflow dans tests-and-quality.yml
     types:
       - completed
     branches: [main]

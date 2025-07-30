@@ -5,7 +5,10 @@ name: Backend CI
 on:
   # Se déclenche lors d'un push sur la branche main ou les branches de test du workflow back
   push:
-    branches: [ main, workflow-test-back ]
+    branches:
+      - main
+      - 'workflow-test-back/**'    # Toutes les branches commençant par workflow-test-back/
+      - 'workflow-test-back-*'     # Toutes les branches commençant par workflow-test-back- suivi de n'importe quoi
     paths:
       - 'back/**'
       - '.github/workflows/backend-ci.yml'

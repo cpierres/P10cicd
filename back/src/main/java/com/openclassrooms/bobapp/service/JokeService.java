@@ -59,4 +59,26 @@ public class JokeService {
         return result.toString();
     }
 
+    public void methodA() {
+        // Code dupliqué intentionnellement
+        boolean condition1 = true;
+        if (condition1) {
+            for (int i = 0; i < 100; i++) {
+                System.out.println("Traiter item " + i);
+                // Logique complexe...
+            }
+        }
+    }
+
+    public void methodB() {
+        // Code dupliqué intentionnellement
+        boolean condition1 = true;
+        if (condition1) {
+            for (int i = 0; i < 100; i++) {
+                System.out.println("Traiter item " + i);
+                // Logique complexe...
+            }
+        }
+    }
+
 }

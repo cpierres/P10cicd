@@ -143,6 +143,8 @@ jobs:
             -Dsonar.sources=back/src/main/java,back/pom.xml
             -Dsonar.tests=back/src/test/java
             -Dsonar.test.inclusions=**/*.java
+            -Dsonar.exclusions=
+            -Dsonar.inclusions=**/*.java,**/*.xml
             -Dsonar.java.binaries=back/target/classes
             -Dsonar.java.test.binaries=back/target/test-classes
             -Dsonar.java.libraries=back/target/dependency/*.jar

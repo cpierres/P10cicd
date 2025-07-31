@@ -27,4 +27,36 @@ public class JokeService {
         logger.info("Retourne numéro de la blague: {}", randomIndex);
         return jokes.get(randomIndex);
     }
+
+    // méthode avec plusieurs branches conditionnelles et sans test pour stimuler sonar
+    public String complexMethodWithoutTests(int value, String input) {
+        StringBuilder result = new StringBuilder();
+
+        if (value > 100) {
+            result.append("Valeur élevée: ").append(value);
+        } else if (value > 50) {
+            result.append("Valeur moyenne: ").append(value);
+        } else {
+            result.append("Valeur faible: ").append(value);
+        }
+
+        if (input != null && !input.isEmpty()) {
+            if (input.length() > 10) {
+                result.append(" - Texte long");
+            } else {
+                result.append(" - Texte court");
+            }
+
+            if (input.matches("^[0-9]+$")) {
+                result.append(" - Numérique");
+            } else if (input.matches("^[a-zA-Z]+$")) {
+                result.append(" - Alphabétique");
+            } else {
+                result.append(" - Mixte");
+            }
+        }
+
+        return result.toString();
+    }
+
 }

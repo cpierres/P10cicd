@@ -118,7 +118,6 @@ jobs:
   # Job pour l'analyse SonarCloud du backend
   backend-sonar:
     needs: [backend-tests]
-    if: needs.backend-tests.outputs.tests_passed == 'true'
     runs-on: ubuntu-latest
 
     steps:
@@ -173,6 +172,7 @@ jobs:
   # Job pour la construction de l'image Docker du backend
   backend-docker:
     needs: [backend-sonar]
+    if: needs.backend-tests.outputs.tests_passed == 'true'
     runs-on: ubuntu-latest
     # Ne s'exécute que sur la branche main ou lors d'un déclenchement manuel
     # if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'

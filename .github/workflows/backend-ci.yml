@@ -31,9 +31,7 @@ jobs:
     defaults:
       run:
         working-directory: ./back
-     # pour définir les sorties du job
-    outputs:
-      tests_passed: ${{ steps.check_tests.outputs.tests_passed }}
+
     # Liste des étapes à exécuter dans ce job
     steps:
       # Récupère le code source du dépôt
@@ -49,34 +47,32 @@ jobs:
           distribution: 'adopt'
           cache: maven           # Active le cache Maven (survit à la destruction du container)
 
-      # compilation séparée pour plus de lisibilité
+      # compilation séparée pour plus de lisibilité (on distingue la partie compilation de l'exécution des tests)
       - name: Build project
         run: mvn compile test-compile #note : clean initial ne servirait pas puisque démarre vierge
 
       # Exécute les tests avec Maven (pas de tests d'intégration dans cette appli donc mvn verify inutile)
       - name: Run tests with Maven
         run: mvn test
-        continue-on-error: true  # Continuer même si les tests échouent
+        continue-on-error: false
 
       # Génère le rapport de couverture JaCoCo
       - name: Generate JaCoCo Report
         run: mvn jacoco:report
-        if: always()  # Exécuter même si l'étape précédente échoue
 
       # Upload rapport JaCoCo comme artefact => stocké dans infra github (sera utile au job Sonar)
       - name: Upload JaCoCo coverage report
         uses: actions/upload-artifact@v4
-        if: always()    # S'exécute même si les étapes précédentes échouent
         with:
           name: jacoco-report    # Nom de l'artefact
           path: back/target/site/jacoco/  # Chemin vers les rapports
           retention-days: 1  # inutile de garder plus d'1 jour
 
-      # Afficher le rapport et faire échouer PR éventuellement si en-dessous d'un seuil
+      # Afficher le rapport et peut faire échouer PR éventuellement si en-dessous d'un seuil
       - name: JaCoCo Code Coverage Report
         id: jacoco_reporter
         uses: PavanMudigonda/jacoco-reporter@v5.0
-        if: always()  # Exécuter même si les étapes précédentes échouent
+        #if: always()  # Exécuter même si les étapes précédentes échouent
         with:
           coverage_results_path: back/target/site/jacoco/jacoco.xml
           coverage_report_name: backend-coverage
@@ -89,7 +85,7 @@ jobs:
 
       - name: Upload backend-classes # partagées avec le job Sonar (classes compilées utiles indépendamment des src)
         uses: actions/upload-artifact@v4
-        if: always()  # Exécuter même si les étapes précédentes échouent
+        # if: always()  # Exécuter même si les étapes précédentes échouent
         with:
           name: backend-classes
           path: |
@@ -103,17 +99,6 @@ jobs:
         with:
           report_paths: '**/target/surefire-reports/TEST-*.xml'  # Chemin des rapports
           fail_on_failure: false
-
-       # vérifier le résultat des tests
-      - name: Check test results
-        id: check_tests
-        if: always()
-        run: |
-          if [ "${{ steps.run_tests.outcome }}" == "success" ]; then
-            echo "tests_passed=true" >> $GITHUB_OUTPUT
-          else
-            echo "tests_passed=false" >> $GITHUB_OUTPUT
-          fi
 
   # Job pour l'analyse SonarCloud du backend
   backend-sonar:
@@ -172,10 +157,7 @@ jobs:
   # Job pour la construction de l'image Docker du backend
   backend-docker:
     needs: [backend-sonar]
-    if: needs.backend-tests.outputs.tests_passed == 'true'
     runs-on: ubuntu-latest
-    # Ne s'exécute que sur la branche main ou lors d'un déclenchement manuel
-    # if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
 
     steps:
       - uses: actions/checkout@v4

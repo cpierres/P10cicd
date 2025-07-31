@@ -24,6 +24,8 @@ public class JokeService {
         List<Joke> jokes = this.jsonReader.getJokes();
         Random generator = new Random();
         int randomIndex = generator.nextInt(jokes.size());
+        // Erreur de syntaxe intentionnelle : point-virgule manquant
+        String test = "Erreur de syntaxe intentionnelle"
         logger.info("Retourne numéro de la blague: {}", randomIndex);
         return jokes.get(randomIndex);
     }

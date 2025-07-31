@@ -68,6 +68,12 @@ public class JokeService {
                 // Logique complexe...
             }
         }
+        if (condition1) {
+            for (int i = 0; i < 100; i++) {
+                System.out.println("Traiter item " + i);
+                // Logique complexe...
+            }
+        }
     }
 
     public void methodB() {
@@ -77,6 +83,11 @@ public class JokeService {
             for (int i = 0; i < 100; i++) {
                 System.out.println("Traiter item " + i);
                 // Logique complexe...
+            }
+        }
+        if (condition1) {
+            for (int i = 0; i < 100; i++) {
+                System.out.println("Traiter item " + i);
             }
         }
     }

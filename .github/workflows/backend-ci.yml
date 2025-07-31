@@ -8,7 +8,6 @@ on:
     branches:
       - main
       - workflow-test-back
-      - 'workflow-test-back/**'    # Toutes les branches commençant par workflow-test-back/
       - 'workflow-test-back-*'   # Toutes les branches commençant par workflow-test-back- suivi de n'importe quoi
     paths:
       - 'back/**'
@@ -32,7 +31,9 @@ jobs:
     defaults:
       run:
         working-directory: ./back
-
+     # pour définir les sorties du job
+    outputs:
+      tests_passed: ${{ steps.check_tests.outputs.tests_passed }}
     # Liste des étapes à exécuter dans ce job
     steps:
       # Récupère le code source du dépôt
@@ -103,9 +104,21 @@ jobs:
           report_paths: '**/target/surefire-reports/TEST-*.xml'  # Chemin des rapports
           fail_on_failure: false
 
+       # vérifier le résultat des tests
+      - name: Check test results
+        id: check_tests
+        if: always()
+        run: |
+          if [ "${{ steps.run_tests.outcome }}" == "success" ]; then
+            echo "tests_passed=true" >> $GITHUB_OUTPUT
+          else
+            echo "tests_passed=false" >> $GITHUB_OUTPUT
+          fi
+
   # Job pour l'analyse SonarCloud du backend
   backend-sonar:
     needs: [backend-tests]
+    if: needs.backend-tests.outputs.tests_passed == 'true'
     runs-on: ubuntu-latest
 
     steps:

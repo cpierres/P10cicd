@@ -95,11 +95,11 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v5.3.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONTEND }}
           SONAR_HOST_URL: https://sonarcloud.io
         with:
           args: >
-            -Dsonar.projectKey=cpierres_P10cicd
+            -Dsonar.projectKey=cpierres_P10cicd-frontend
             -Dsonar.organization=cpierres
             -Dsonar.sources=front/src
             -Dsonar.tests=front/src/app
@@ -109,7 +109,7 @@ jobs:
       - name: Lien SonarCloud Frontend
         if: always()
         run: |
-          echo "Rapport SonarCloud Frontend: https://sonarcloud.io/project/overview?id=cpierres_P10cicd"
+          echo "**Rapport SonarCloud Frontend:** https://sonarcloud.io/project/overview?id=cpierres_P10cicd-frontend"
 
   # Job pour la construction de l'image Docker du frontend
   frontend-docker:

@@ -74,11 +74,22 @@ public class JokeService {
                 // Logique complexe...
             }
         }
+        if (condition1) {
+            for (int i = 0; i < 100; i++) {
+                System.out.println("Traiter item " + i);
+            }
+        }
     }
 
     public void methodB() {
         // Code dupliqué intentionnellement
         boolean condition1 = true;
+        if (condition1) {
+            for (int i = 0; i < 100; i++) {
+                System.out.println("Traiter item " + i);
+                // Logique complexe...
+            }
+        }
         if (condition1) {
             for (int i = 0; i < 100; i++) {
                 System.out.println("Traiter item " + i);

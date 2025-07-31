@@ -1,0 +1,181 @@
+# Nom du workflow GitHub
+name: Backend CI
+
+# Définit quand le workflow sera déclenché
+on:
+  # Se déclenche lors d'un push sur la branche main ou les branches de test du workflow back
+  push:
+    branches:
+      - main
+      - workflow-test-back
+      - 'workflow-test-back/**'    # Toutes les branches commençant par workflow-test-back/
+      - 'workflow-test-back-*'   # Toutes les branches commençant par workflow-test-back- suivi de n'importe quoi
+    paths:
+      - 'back/**'
+      - '.github/workflows/backend-ci.yml'
+  # Se déclenche lors d'une PR vers la branche main
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'back/**'
+      - '.github/workflows/backend-ci.yml'
+  # Permet de déclencher manuellement le workflow
+  workflow_dispatch:
+
+# Liste des jobs à exécuter
+jobs:
+  # Définition du job de tests backend
+  backend-tests:
+    # Utilise la dernière version d'Ubuntu comme environnement d'exécution
+    runs-on: ubuntu-latest
+    # Configure le répertoire de travail par défaut pour toutes les commandes
+    defaults:
+      run:
+        working-directory: ./back
+
+    # Liste des étapes à exécuter dans ce job
+    steps:
+      # Récupère le code source du dépôt
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Utile pour Sonar pour effectuer des comparaisons
+
+      # Configure Java 11 pour l'environnement
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'     # Utiliser JDK 11 comme dans le projet
+          distribution: 'adopt'
+          cache: maven           # Active le cache Maven (survit à la destruction du container)
+
+      # compilation séparée pour plus de lisibilité
+      - name: Build project
+        run: mvn compile test-compile #note : clean initial ne servirait pas puisque démarre vierge
+
+      # Exécute les tests avec Maven (pas de tests d'intégration dans cette appli donc mvn verify inutile)
+      - name: Run tests with Maven
+        run: mvn test
+        continue-on-error: true  # Continuer même si les tests échouent
+
+      # Génère le rapport de couverture JaCoCo
+      - name: Generate JaCoCo Report
+        run: mvn jacoco:report
+        if: always()  # Exécuter même si l'étape précédente échoue
+
+      # Upload rapport JaCoCo comme artefact => stocké dans infra github (sera utile au job Sonar)
+      - name: Upload JaCoCo coverage report
+        uses: actions/upload-artifact@v4
+        if: always()    # S'exécute même si les étapes précédentes échouent
+        with:
+          name: jacoco-report    # Nom de l'artefact
+          path: back/target/site/jacoco/  # Chemin vers les rapports
+          retention-days: 1  # inutile de garder plus d'1 jour
+
+      # Afficher le rapport et faire échouer PR éventuellement si en-dessous d'un seuil
+      - name: JaCoCo Code Coverage Report
+        id: jacoco_reporter
+        uses: PavanMudigonda/jacoco-reporter@v5.0
+        if: always()  # Exécuter même si les étapes précédentes échouent
+        with:
+          coverage_results_path: back/target/site/jacoco/jacoco.xml
+          coverage_report_name: backend-coverage
+          coverage_report_title: JaCoCo Coverage Report
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          skip_check_run: false
+          minimum_coverage: 80
+          fail_below_threshold: false
+          publish_only_summary: false
+
+      - name: Upload backend-classes # partagées avec le job Sonar (classes compilées utiles indépendamment des src)
+        uses: actions/upload-artifact@v4
+        if: always()  # Exécuter même si les étapes précédentes échouent
+        with:
+          name: backend-classes
+          path: |
+            back/target/classes
+            back/target/test-classes
+          retention-days: 1
+
+      # Publie les résultats des tests JUnit
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v5
+        with:
+          report_paths: '**/target/surefire-reports/TEST-*.xml'  # Chemin des rapports
+          fail_on_failure: false
+
+  # Job pour l'analyse SonarCloud du backend
+  backend-sonar:
+    needs: [backend-tests]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Utile car permet à Sonar d'effectuer des comparaisons
+
+      - name: Configuration JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'  # Version minimale obligatoire pour SonarCloud
+          distribution: 'adopt'
+
+      # Récupération des artefacts générés lors des tests backend
+      - name: Téléchargement du rapport JaCoCo
+        uses: actions/download-artifact@v4
+        with:
+          name: jacoco-report
+          path: back/target/site/jacoco/
+
+      - name: Téléchargement des classes backend
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-classes
+          path: back/target/
+
+      # Analyse SonarCloud pour le backend uniquement
+      - name: Analyse SonarCloud Backend
+        uses: SonarSource/sonarqube-scan-action@v5.3.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
+        with:
+          args: >
+            -Dsonar.projectKey=cpierres_P10cicd
+            -Dsonar.organization=cpierres
+            -Dsonar.sources=back/src/main/java,back/pom.xml
+            -Dsonar.tests=back/src/test/java
+            -Dsonar.test.inclusions=**/*.java
+            -Dsonar.java.binaries=back/target/classes
+            -Dsonar.java.test.binaries=back/target/test-classes
+            -Dsonar.java.libraries=back/target/dependency/*.jar
+            -Dsonar.coverage.jacoco.xmlReportPaths=back/target/site/jacoco/jacoco.xml
+            -Dsonar.cpd.xml.minimumLines=3
+
+      - name: Lien SonarCloud Backend
+        if: always()
+        run: |
+          echo "**Rapport SonarCloud Backend:** https://sonarcloud.io/project/overview?id=cpierres_P10cicd"
+
+  # Job pour la construction de l'image Docker du backend
+  backend-docker:
+    needs: [backend-sonar]
+    runs-on: ubuntu-latest
+    # Ne s'exécute que sur la branche main ou lors d'un déclenchement manuel
+    # if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push backend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./back
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-back:latest

@@ -8,8 +8,7 @@ on:
     branches:
       - main
       - workflow-test-front
-      - 'workflow-test-front/**' # branches commençant par workflow-test-back/
-      - 'workflow-test-front-*'  # branches commençant par workflow-test-back- suivi de n'importe quoi
+      - 'workflow-test-front-*'  # branches commençant par workflow-test-front- suivi de n'importe quoi
     paths:
       - 'front/'
       - '.github/workflows/frontend-ci.yml'
@@ -129,9 +128,9 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push backend
+      - name: Build and push frontend
         uses: docker/build-push-action@v6
         with:
-          context: ./back
+          context: ./front
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-frontend:latest

@@ -144,7 +144,9 @@ jobs:
             -Dsonar.tests=back/src/test/java
             -Dsonar.test.inclusions=**/*.java
             -Dsonar.inclusions=**/*.java,**/*.xml
-            -Dsonar.exclusions=*.toto
+            -Dsonar.java.source.inclusions=**/*.java
+            -Dsonar.java.file.suffixes=.java
+            -Dsonar.exclusions=*.toto,!**/*.java
             -Dsonar.java.binaries=back/target/classes
             -Dsonar.java.test.binaries=back/target/test-classes
             -Dsonar.java.libraries=back/target/dependency/*.jar

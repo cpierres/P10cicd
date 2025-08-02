@@ -8,16 +8,16 @@ on:
     branches:
       - main
       - workflow-test-front
-      - 'workflow-test-front-*'  # branches commençant par workflow-test-front- suivi de n'importe quoi
+      - workflow-test-front-*  # branches commençant par workflow-test-front- suivi de n'importe quoi
     paths:
-      - 'front/'
-      - '.github/workflows/frontend-ci.yml'
+      - front/
+      - .github/workflows/frontend-ci.yml
   # Se déclenche lors d'une PR vers la branche main
   pull_request:
     branches: [ main ]
     paths:
-      - 'front/'
-      - '.github/workflows/frontend-ci.yml'
+      - front/
+      - .github/workflows/frontend-ci.yml
   # Permet de déclencher manuellement le workflow
   workflow_dispatch:
 

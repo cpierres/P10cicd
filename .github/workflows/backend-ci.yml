@@ -8,16 +8,16 @@ on:
     branches:
       - main
       - workflow-test-back
-      - 'workflow-test-back-*'   # Toutes les branches commençant par workflow-test-back- suivi de n'importe quoi
+      - workflow-test-back-*   # Toutes les branches commençant par workflow-test-back- suivi de n'importe quoi
     paths:
-      - 'back/**'
-      - '.github/workflows/backend-ci.yml'
+      - back/**
+      - .github/workflows/backend-ci.yml
   # Se déclenche lors d'une PR vers la branche main
   pull_request:
     branches: [ main ]
     paths:
-      - 'back/**'
-      - '.github/workflows/backend-ci.yml'
+      - back/**
+      - .github/workflows/backend-ci.yml
   # Permet de déclencher manuellement le workflow
   workflow_dispatch:
 
@@ -130,6 +130,8 @@ jobs:
           path: back/target/
 
       # Analyse SonarCloud pour le backend uniquement
+      # note : bug d'exclusion java intempestive sur sonarcloud depuis séparation en 2 projets back et front sur cloud,
+      # impossible à contourner (fonctionne parfaitement avec version community)
       - name: Analyse SonarCloud Backend
         uses: SonarSource/sonarqube-scan-action@v5.3.0
         env:
@@ -143,8 +145,10 @@ jobs:
             -Dsonar.sources=back/src/main/java,back/pom.xml
             -Dsonar.tests=back/src/test/java
             -Dsonar.test.inclusions=**/*.java
-            -Dsonar.exclusions=
             -Dsonar.inclusions=**/*.java,**/*.xml
+            -Dsonar.java.source.inclusions=**/*.java
+            -Dsonar.java.file.suffixes=.java
+            -Dsonar.exclusions=*.toto,!**/*.java
             -Dsonar.java.binaries=back/target/classes
             -Dsonar.java.test.binaries=back/target/test-classes
             -Dsonar.java.libraries=back/target/dependency/*.jar

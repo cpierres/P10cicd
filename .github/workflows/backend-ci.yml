@@ -130,6 +130,8 @@ jobs:
           path: back/target/
 
       # Analyse SonarCloud pour le backend uniquement
+      # note : bug d'exclusion java intempestive sur sonarcloud depuis séparation en 2 projets back et front sur cloud,
+      # impossible à contourner (fonctionne parfaitement avec version community)
       - name: Analyse SonarCloud Backend
         uses: SonarSource/sonarqube-scan-action@v5.3.0
         env:

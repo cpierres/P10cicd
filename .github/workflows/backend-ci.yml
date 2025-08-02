@@ -8,16 +8,16 @@ on:
     branches:
       - main
       - workflow-test-back
-      - 'workflow-test-back-*'   # Toutes les branches commençant par workflow-test-back- suivi de n'importe quoi
+      - workflow-test-back-*   # Toutes les branches commençant par workflow-test-back- suivi de n'importe quoi
     paths:
-      - 'back/**'
-      - '.github/workflows/backend-ci.yml'
+      - back/**
+      - .github/workflows/backend-ci.yml
   # Se déclenche lors d'une PR vers la branche main
   pull_request:
     branches: [ main ]
     paths:
-      - 'back/**'
-      - '.github/workflows/backend-ci.yml'
+      - back/**
+      - .github/workflows/backend-ci.yml
   # Permet de déclencher manuellement le workflow
   workflow_dispatch:
 

@@ -9,6 +9,7 @@ on:
       - main
       - workflow-test-front
       - workflow-test-front-*  # branches commençant par workflow-test-front- suivi de n'importe quoi
+      - workflow-test-my-srv-sonarqube # provisoire : pour valider le flow au plus tôt
     paths:
       - front/
       - .github/workflows/frontend-ci.yml
@@ -95,12 +96,11 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v5.3.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONTEND }}
-          SONAR_HOST_URL: https://sonarcloud.io
+          SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN_FRONTEND }}
+          SONAR_HOST_URL: https://sonarqube.cpierres.dscloud.me
         with:
           args: >
             -Dsonar.projectKey=cpierres_P10cicd-frontend
-            -Dsonar.organization=cpierres
             -Dsonar.sources=front/src
             -Dsonar.tests=front/src/app
             -Dsonar.test.inclusions=/*.spec.ts
@@ -109,7 +109,7 @@ jobs:
       - name: Lien SonarCloud Frontend
         if: always()
         run: |
-          echo "**Rapport SonarCloud Frontend:** https://sonarcloud.io/project/overview?id=cpierres_P10cicd-frontend"
+          echo "**Rapport SonarCloud Frontend:** https://sonarqube.cpierres.dscloud.me/dashboard?id=cpierres_P10cicd-frontend"
 
   # Job pour la construction de l'image Docker du frontend
   frontend-docker:

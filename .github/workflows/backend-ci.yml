@@ -133,27 +133,32 @@ jobs:
       # Analyse SonarCloud pour le backend uniquement
       # note : bug d'exclusion java intempestive sur sonarcloud depuis séparation en 2 projets back et front sur cloud,
       # impossible à contourner (fonctionne parfaitement avec version community)
+#      - name: Analyse SonarCloud Backend
+#        uses: SonarSource/sonarqube-scan-action@v5.3.0
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#          SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN_BACKEND }}
+#          SONAR_HOST_URL: https://sonarqube.cpierres.dscloud.me
+#        with:
+#          args: >
+#            -Dsonar.projectKey=cpierres_P10cicd-backend
+#            -Dsonar.sources=back/src/main/java,back/pom.xml
+#            -Dsonar.tests=back/src/test/java
+#            -Dsonar.test.inclusions=**/*.java
+#            -Dsonar.inclusions=**/*.java,**/*.xml
+#            -Dsonar.java.source.inclusions=**/*.java
+#            -Dsonar.java.file.suffixes=.java
+#            -Dsonar.java.binaries=back/target/classes
+#            -Dsonar.java.test.binaries=back/target/test-classes
+#            -Dsonar.java.libraries=back/target/dependency/*.jar
+#            -Dsonar.coverage.jacoco.xmlReportPaths=back/target/site/jacoco/jacoco.xml
+#            -Dsonar.cpd.xml.minimumLines=3
+#            -Dsonar.cpd.java.minimumLines=3
+
       - name: Analyse SonarCloud Backend
-        uses: SonarSource/sonarqube-scan-action@v5.3.0
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN_BACKEND }}
-          SONAR_HOST_URL: https://sonarqube.cpierres.dscloud.me
-        with:
-          args: >
-            -Dsonar.projectKey=cpierres_P10cicd-backend
-            -Dsonar.sources=back/src/main/java,back/pom.xml
-            -Dsonar.tests=back/src/test/java
-            -Dsonar.test.inclusions=**/*.java
-            -Dsonar.inclusions=**/*.java,**/*.xml
-            -Dsonar.java.source.inclusions=**/*.java
-            -Dsonar.java.file.suffixes=.java
-            -Dsonar.java.binaries=back/target/classes
-            -Dsonar.java.test.binaries=back/target/test-classes
-            -Dsonar.java.libraries=back/target/dependency/*.jar
-            -Dsonar.coverage.jacoco.xmlReportPaths=back/target/site/jacoco/jacoco.xml
-            -Dsonar.cpd.xml.minimumLines=3
-            -Dsonar.cpd.java.minimumLines=3
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=cpierres_P10cicd-backend
 
       - name: Lien SonarCloud Backend
         if: always()

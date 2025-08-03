@@ -148,8 +148,6 @@ jobs:
             -Dsonar.inclusions=**/*.java,**/*.xml
             -Dsonar.java.source.inclusions=**/*.java
             -Dsonar.java.file.suffixes=.java
-            # Aucune exclusion nécessaire pour les fichiers Java
-            # -Dsonar.exclusions=*.toto,!**/*.java
             -Dsonar.java.binaries=back/target/classes
             -Dsonar.java.test.binaries=back/target/test-classes
             -Dsonar.java.libraries=back/target/dependency/*.jar

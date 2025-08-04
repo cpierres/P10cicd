@@ -7,9 +7,7 @@ on:
   push:
     branches:
       - main
-      - workflow-test-back
-      - workflow-test-back-*   # Toutes les branches commençant par workflow-test-back- suivi de n'importe quoi
-      - workflow-test-my-srv-sonarqube # provisoire : pour valider le flow au plus tôt
+      - workflow-test-*   # Toutes les branches commençant par workflow-test- suivi de n'importe quoi
     paths:
       - back/**
       - .github/workflows/backend-ci.yml
@@ -105,6 +103,7 @@ jobs:
   backend-sonar:
     needs: [backend-tests]
     runs-on: ubuntu-latest
+    continue-on-error: true  # Rend l'analyse SonarQube non bloquante
 
     steps:
       - uses: actions/checkout@v4
@@ -147,7 +146,9 @@ jobs:
 
   # Job pour la construction de l'image Docker du backend
   backend-docker:
-    needs: [backend-sonar]
+    # Exécuter si les tests ont réussi, indépendamment du résultat de SonarQube
+    needs: [backend-tests, backend-sonar]
+    if: ${{ always() && needs.backend-tests.result == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -165,3 +166,29 @@ jobs:
           context: ./back
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-back:latest
+          
+      - name: Afficher l'URL de l'image Docker
+        if: success()
+        run: |
+          echo "✅ Image Docker backend publiée avec succès sur: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/bobapp-back:latest"
+          echo "Pour télécharger l'image: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-back:latest"
+          echo "Lien Docker Hub: https://hub.docker.com/r/${{ secrets.DOCKERHUB_USERNAME }}/bobapp-back"
+          
+      - name: Commenter la PR avec le lien Docker
+        if: github.event_name == 'pull_request' && success()
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { issue: { number: issue_number }, repo: { owner, repo } } = context;
+            github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number,
+              body: `✅ **Image Docker Backend déployée avec succès !**
+              
+              - **Image**: \`docker.io/${{ secrets.DOCKERHUB_USERNAME }}/bobapp-back:latest\`
+              - **Pull**: \`docker pull ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-back:latest\`
+              - **Lien Docker Hub**: [https://hub.docker.com/r/${{ secrets.DOCKERHUB_USERNAME }}/bobapp-back](https://hub.docker.com/r/${{ secrets.DOCKERHUB_USERNAME }}/bobapp-back)
+              `
+            });

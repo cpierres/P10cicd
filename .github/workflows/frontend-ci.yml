@@ -7,9 +7,7 @@ on:
   push:
     branches:
       - main
-      - workflow-test-front
-      - workflow-test-front-*  # branches commençant par workflow-test-front- suivi de n'importe quoi
-      - workflow-test-my-srv-sonarqube # provisoire : pour valider le flow au plus tôt
+      - workflow-test-*   # Toutes les branches commençant par workflow-test- suivi de n'importe quoi
     paths:
       - front/
       - .github/workflows/frontend-ci.yml
@@ -78,6 +76,7 @@ jobs:
   frontend-sonar:
     needs: [frontend-tests]
     runs-on: ubuntu-latest
+    continue-on-error: true  # Rend l'analyse SonarQube non bloquante
     defaults:
       run:
         working-directory: ./front
@@ -112,7 +111,9 @@ jobs:
 
   # Job pour la construction de l'image Docker du frontend
   frontend-docker:
-    needs: [frontend-sonar]
+    # Exécuter si les tests ont réussi, indépendamment du résultat de SonarQube
+    needs: [frontend-tests, frontend-sonar]
+    if: ${{ always() && needs.frontend-tests.result == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -133,3 +134,29 @@ jobs:
           context: ./front
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-frontend:latest
+          
+      - name: Afficher l'URL de l'image Docker
+        if: success()
+        run: |
+          echo "✅ Image Docker frontend publiée avec succès sur: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/bobapp-frontend:latest"
+          echo "Pour télécharger l'image: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-frontend:latest"
+          echo "Lien Docker Hub: https://hub.docker.com/r/${{ secrets.DOCKERHUB_USERNAME }}/bobapp-frontend"
+          
+      - name: Commenter la PR avec le lien Docker
+        if: github.event_name == 'pull_request' && success()
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { issue: { number: issue_number }, repo: { owner, repo } } = context;
+            github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number,
+              body: `✅ **Image Docker Frontend déployée avec succès !**
+              
+              - **Image**: \`docker.io/${{ secrets.DOCKERHUB_USERNAME }}/bobapp-frontend:latest\`
+              - **Pull**: \`docker pull ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-frontend:latest\`
+              - **Lien Docker Hub**: [https://hub.docker.com/r/${{ secrets.DOCKERHUB_USERNAME }}/bobapp-frontend](https://hub.docker.com/r/${{ secrets.DOCKERHUB_USERNAME }}/bobapp-frontend)
+              `
+            });

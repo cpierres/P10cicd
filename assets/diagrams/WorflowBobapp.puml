@@ -1,0 +1,86 @@
+@startuml "BobApp - Workflow de Contribution"
+
+skinparam {
+  BackgroundColor white
+  ArrowColor #2C3E50
+  BorderColor #34495E
+  NodeBackgroundColor #ECF0F1
+  NodeBorderColor #7F8C8D
+  ActorBorderColor #2980B9
+  ActorBackgroundColor #3498DB
+  NoteBackgroundColor #F1C40F
+  NoteBorderColor #F39C12
+}
+
+actor "Développeur" as Dev
+participant "Branche Feature" as Feature
+participant "GitHub PR" as PR
+participant "GitHub Actions" as Actions
+participant "Branche Main" as Main
+participant "Docker Hub" as Docker
+
+note right of Dev
+  La branche main est protégée
+  et nécessite une PR approuvée
+  pour toute modification
+end note
+
+Dev -> Feature : 1. Crée une branche feature
+activate Feature
+
+Dev -> Feature : 2. Développe et commit les changements
+Dev -> Feature : 3. Push vers le dépôt distant
+
+Dev -> PR : 4. Crée une Pull Request
+activate PR
+
+PR -> Actions : 5. Déclenche les workflows CI
+activate Actions
+
+note right of Actions
+  **Workflow Backend CI**
+  - Tests unitaires (bloquants)
+  - Analyse SonarQube (non bloquante)
+  - Construction image Docker
+
+  **Workflow Frontend CI**
+  - Tests unitaires (bloquants)
+  - Analyse SonarQube (non bloquante)
+  - Construction image Docker
+end note
+
+Actions --> PR : 6. Ajoute commentaire avec résultats des tests
+Actions --> PR : 7. Ajoute commentaire avec liens SonarQube
+Actions --> Docker : 8. Publie les images Docker (si tests réussis)
+activate Docker
+
+Actions --> PR : 9. Ajoute commentaire avec liens Docker Hub
+deactivate Actions
+
+note right of PR
+  Vérifications requises avant merge:
+  - Revue de code par un autre développeur
+  - Tous les tests unitaires passent
+  - Qualité du code évaluée par SonarQube
+    (résultats visibles mais non bloquants)
+end note
+
+PR -> Main : 10. Merge après approbation
+deactivate PR
+deactivate Feature
+activate Main
+
+Main -> Actions : 11. Déclenche à nouveau les workflows CI
+activate Actions
+
+Actions --> Docker : 12. Publie les images Docker finales
+deactivate Actions
+
+note right of Main
+  La branche main contient du code
+  fonctionnel (tests validés) avec
+  une qualité de code documentée
+  mais pas nécessairement parfaite
+end note
+
+@enduml

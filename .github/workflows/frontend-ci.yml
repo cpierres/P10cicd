@@ -74,10 +74,13 @@ jobs:
           # Chemin vers le dossier contenant les rapports de couverture générés
           path: front/coverage/
 
-  # Job pour l'analyse SonarCloud du frontend
+  # Job pour l'analyse SonarQube du frontend
   frontend-sonar:
     needs: [frontend-tests]
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./front
 
     steps:
       - uses: actions/checkout@v4
@@ -91,25 +94,19 @@ jobs:
           name: angular-coverage
           path: front/coverage/
 
-      # Analyse SonarCloud pour le frontend uniquement
-      - name: Analyse SonarCloud Frontend
+      # Analyse SonarQube pour le frontend uniquement
+      - name: Analyse SonarQube Frontend
         uses: SonarSource/sonarqube-scan-action@v5.3.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN_FRONTEND }}
           SONAR_HOST_URL: https://sonarqube.cpierres.dscloud.me
-        with:
-          args: >
-            -Dsonar.projectKey=cpierres_P10cicd-frontend
-            -Dsonar.sources=front/src
-            -Dsonar.tests=front/src/app
-            -Dsonar.test.inclusions=/*.spec.ts
-            -Dsonar.javascript.lcov.reportPaths=front/coverage/lcov.info
+        # Utilise le fichier sonar-project.properties au lieu des paramètres en ligne de commande
 
-      - name: Lien SonarCloud Frontend
+      - name: Lien SonarQube Frontend
         if: always()
         run: |
-          echo "**Rapport SonarCloud Frontend:** https://sonarqube.cpierres.dscloud.me/dashboard?id=cpierres_P10cicd-frontend"
+          echo "**Rapport SonarQube Frontend:** https://sonarqube.cpierres.dscloud.me/dashboard?id=cpierres_P10cicd-frontend"
 
   # Job pour la construction de l'image Docker du frontend
   frontend-docker:

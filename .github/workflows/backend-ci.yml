@@ -9,6 +9,7 @@ on:
       - main
       - workflow-test-back
       - workflow-test-back-*   # Toutes les branches commençant par workflow-test-back- suivi de n'importe quoi
+      - workflow-test-my-srv-sonarqube # provisoire : pour valider le flow au plus tôt
     paths:
       - back/**
       - .github/workflows/backend-ci.yml
@@ -41,11 +42,12 @@ jobs:
 
       # Configure Java 11 pour l'environnement
       - name: Set up JDK 11
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4.7.1
         with:
-          java-version: '11'     # Utiliser JDK 11 comme dans le projet
+          java-version: '11'     # Utiliser JDK 11 comme requis dans le projet
           distribution: 'adopt'
           cache: maven           # Active le cache Maven (survit à la destruction du container)
+          cache-dependency-path: '**/pom.xml'  # Utilise un même chemin de dépendance pour partager le cache avec le job backend-sonar
 
       # compilation séparée pour plus de lisibilité (on distingue la partie compilation de l'exécution des tests)
       - name: Build project
@@ -72,7 +74,6 @@ jobs:
       - name: JaCoCo Code Coverage Report
         id: jacoco_reporter
         uses: PavanMudigonda/jacoco-reporter@v5.0
-        #if: always()  # Exécuter même si les étapes précédentes échouent
         with:
           coverage_results_path: back/target/site/jacoco/jacoco.xml
           coverage_report_name: backend-coverage
@@ -83,7 +84,7 @@ jobs:
           fail_below_threshold: false
           publish_only_summary: false
 
-      - name: Upload backend-classes # partagées avec le job Sonar (classes compilées utiles indépendamment des src)
+      - name: Upload backend-classes # partagées avec job Sonar (classes compilées utiles indépendamment des src)
         uses: actions/upload-artifact@v4
         # if: always()  # Exécuter même si les étapes précédentes échouent
         with:
@@ -100,7 +101,7 @@ jobs:
           report_paths: '**/target/surefire-reports/TEST-*.xml'  # Chemin des rapports
           fail_on_failure: false
 
-  # Job pour l'analyse SonarCloud du backend
+  # Job pour l'analyse SonarQube du backend
   backend-sonar:
     needs: [backend-tests]
     runs-on: ubuntu-latest
@@ -111,10 +112,12 @@ jobs:
           fetch-depth: 0  # Utile car permet à Sonar d'effectuer des comparaisons
 
       - name: Configuration JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@4.7.1
         with:
-          java-version: '17'  # Version minimale obligatoire pour SonarCloud
+          java-version: '17'  # Version minimale obligatoire pour SonarQube
           distribution: 'adopt'
+          cache: 'maven'
+          cache-dependency-path: '**/pom.xml'
 
       # Récupération des artefacts générés lors des tests backend
       - name: Téléchargement du rapport JaCoCo
@@ -129,37 +132,18 @@ jobs:
           name: backend-classes
           path: back/target/
 
-      # Analyse SonarCloud pour le backend uniquement
-      # note : bug d'exclusion java intempestive sur sonarcloud depuis séparation en 2 projets back et front sur cloud,
-      # impossible à contourner (fonctionne parfaitement avec version community)
-      - name: Analyse SonarCloud Backend
-        uses: SonarSource/sonarqube-scan-action@v5.3.0
+      - name: Analyse SonarQube Backend
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_BACKEND }}
-          SONAR_HOST_URL: https://sonarcloud.io
-        with:
-          args: >
-            -Dsonar.projectKey=cpierres_P10cicd-backend
-            -Dsonar.organization=cpierres
-            -Dsonar.sources=back/src/main/java,back/pom.xml
-            -Dsonar.tests=back/src/test/java
-            -Dsonar.test.inclusions=**/*.java
-            -Dsonar.inclusions=**/*.java,**/*.xml
-            -Dsonar.java.source.inclusions=**/*.java
-            -Dsonar.java.file.suffixes=.java
-            -Dsonar.exclusions=*.toto,!**/*.java
-            -Dsonar.java.binaries=back/target/classes
-            -Dsonar.java.test.binaries=back/target/test-classes
-            -Dsonar.java.libraries=back/target/dependency/*.jar
-            -Dsonar.coverage.jacoco.xmlReportPaths=back/target/site/jacoco/jacoco.xml
-            -Dsonar.cpd.xml.minimumLines=3
-            -Dsonar.cpd.java.minimumLines=3
+          SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN_BACKEND }}
+          SONAR_HOST_URL: https://sonarqube.cpierres.dscloud.me
+        working-directory: ./back
+        # Ne pas rebuilder ni lancer les tests puisque cela a été fait préalablement avec le "bon JDK 11"
+        run: mvn -B sonar:sonar -DskipTests=true -Dsonar.projectKey=cpierres_P10cicd-backend
 
-      - name: Lien SonarCloud Backend
+      - name: Lien SonarQube Backend
         if: always()
         run: |
-          echo "**Rapport SonarCloud Backend:** https://sonarcloud.io/project/overview?id=cpierres_P10cicd-backend"
+          echo "**Rapport SonarQube Backend:** https://sonarqube.cpierres.dscloud.me/dashboard?id=cpierres_P10cicd-backend&codeScope=overall"
 
   # Job pour la construction de l'image Docker du backend
   backend-docker:

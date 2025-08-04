@@ -140,7 +140,9 @@ jobs:
         run: |
           echo "✅ Image Docker frontend publiée avec succès"
           echo "Pour télécharger l'image: docker pull cpierres/bobapp-frontend:latest"
-          echo "Lien Docker Hub: https://hub.docker.com/repository/docker/cpierres/bobapp-frontend/general"
+          echo "Lien Docker Hub: https://hub.docker.com/repository/docker/c"
+          echo "pierres/bobapp-frontend/general"
+          echo "NOTE: Si le lien ci-dessus contient des astérisques (***), veuillez utiliser cette URL manuellement: https://hub.docker.com/repository/docker/cpierres/bobapp-frontend/general"
           
       - name: Commenter la PR avec le lien Docker
         if: github.event_name == 'pull_request' && success()
@@ -156,6 +158,6 @@ jobs:
               body: `✅ **Image Docker Frontend déployée avec succès !**
               
               - **Pull**: \`docker pull cpierres/bobapp-frontend:latest\`
-              - **Lien Docker Hub**: [https://hub.docker.com/repository/docker/cpierres/bobapp-frontend/general](https://hub.docker.com/repository/docker/${{ secrets.DOCKERHUB_USERNAME }}/bobapp-frontend/general)
+              - **Lien Docker Hub**: [https://hub.docker.com/repository/docker/cpierres/bobapp-frontend/general](https://hub.docker.com/repository/docker/cpierres/bobapp-frontend/general)
               `
             });

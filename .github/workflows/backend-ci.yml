@@ -173,6 +173,7 @@ jobs:
           echo "✅ Image Docker backend publiée avec succès"
           echo "Pour télécharger l'image: docker pull cpierres/bobapp-back:latest"
           echo "Lien Docker Hub: https://hub.docker.com/repository/docker/cpierres/bobapp-back/general"
+          echo "NOTE: Si le lien ci-dessus contient des astérisques (***), veuillez utiliser cette URL manuellement: https://hub.docker.com/repository/docker/cpierres/bobapp-back/general"
           
       - name: Commenter la PR avec le lien Docker
         if: github.event_name == 'pull_request' && success()
@@ -187,6 +188,6 @@ jobs:
               issue_number,
               body: `✅ **Image Docker Backend déployée avec succès !**
               - **Pull**: \`docker pull cpierres/bobapp-back:latest\`
-              - **Lien Docker Hub**: [https://hub.docker.com/repository/docker/cpierres/bobapp-back/general](https://hub.docker.com/repository/docker/${{ secrets.DOCKERHUB_USERNAME }}/bobapp-back/general)
+              - **Lien Docker Hub**: [https://hub.docker.com/repository/docker/cpierres/bobapp-back/general](https://hub.docker.com/repository/docker/cpierres/bobapp-back/general)
               `
             });

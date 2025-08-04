@@ -111,7 +111,7 @@ jobs:
           fetch-depth: 0  # Utile car permet à Sonar d'effectuer des comparaisons
 
       - name: Configuration JDK 17
-        uses: actions/setup-java@4.7.1
+        uses: actions/setup-java@v4.7.1
         with:
           java-version: '17'  # Version minimale obligatoire pour SonarQube
           distribution: 'adopt'
@@ -170,9 +170,9 @@ jobs:
       - name: Afficher l'URL de l'image Docker
         if: success()
         run: |
-          echo "✅ Image Docker backend publiée avec succès sur: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/bobapp-back:latest"
-          echo "Pour télécharger l'image: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-back:latest"
-          echo "Lien Docker Hub: https://hub.docker.com/r/${{ secrets.DOCKERHUB_USERNAME }}/bobapp-back"
+          echo "✅ Image Docker backend publiée avec succès"
+          echo "Pour télécharger l'image: docker pull cpierres/bobapp-back:latest"
+          echo "Lien Docker Hub: https://hub.docker.com/repository/docker/cpierres/bobapp-back/general"
           
       - name: Commenter la PR avec le lien Docker
         if: github.event_name == 'pull_request' && success()
@@ -186,9 +186,7 @@ jobs:
               repo,
               issue_number,
               body: `✅ **Image Docker Backend déployée avec succès !**
-              
-              - **Image**: \`docker.io/${{ secrets.DOCKERHUB_USERNAME }}/bobapp-back:latest\`
-              - **Pull**: \`docker pull ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-back:latest\`
-              - **Lien Docker Hub**: [https://hub.docker.com/r/${{ secrets.DOCKERHUB_USERNAME }}/bobapp-back](https://hub.docker.com/r/${{ secrets.DOCKERHUB_USERNAME }}/bobapp-back)
+              - **Pull**: \`docker pull cpierres/bobapp-back:latest\`
+              - **Lien Docker Hub**: [https://hub.docker.com/repository/docker/cpierres/bobapp-back/general](https://hub.docker.com/repository/docker/${{ secrets.DOCKERHUB_USERNAME }}/bobapp-back/general)
               `
             });

@@ -47,6 +47,7 @@ jobs:
           java-version: '11'     # Utiliser JDK 11 comme requis dans le projet
           distribution: 'adopt'
           cache: maven           # Active le cache Maven (survit à la destruction du container)
+          cache-dependency-path: '**/pom.xml'  # Utilise un même chemin de dépendance pour partager le cache avec le job backend-sonar
 
       # compilation séparée pour plus de lisibilité (on distingue la partie compilation de l'exécution des tests)
       - name: Build project
@@ -115,6 +116,8 @@ jobs:
         with:
           java-version: '17'  # Version minimale obligatoire pour SonarQube
           distribution: 'adopt'
+          cache: 'maven'
+          cache-dependency-path: '**/pom.xml'
 
       # Récupération des artefacts générés lors des tests backend
       - name: Téléchargement du rapport JaCoCo
@@ -135,7 +138,7 @@ jobs:
           SONAR_HOST_URL: https://sonarqube.cpierres.dscloud.me
         working-directory: ./back
         # Ne pas rebuilder ni lancer les tests puisque cela a été fait préalablement avec le "bon JDK 11"
-        run: mvn -B sonar:sonar -DskipTests=true
+        run: mvn -B sonar:sonar -DskipTests=true -Dsonar.projectKey=cpierres_P10cicd-backend
 
       - name: Lien SonarQube Backend
         if: always()

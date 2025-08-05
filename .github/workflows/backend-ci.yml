@@ -173,14 +173,7 @@ jobs:
         run: |
           echo "image_name=cpierres/bobapp-back:latest" >> $GITHUB_OUTPUT
           echo "docker_hub_url=https://hub.docker.com/repository/docker/cpierres/bobapp-back/general" >> $GITHUB_OUTPUT
-          echo "docker_hub_url_display=https://hub.docker.com → Repository: bobapp-back" >> $GITHUB_OUTPUT
           
-      - name: Afficher l'URL de l'image Docker
-        if: success()
-        run: |
-          echo "✅ Image Docker backend publiée avec succès"
-          echo "Pour télécharger l'image: docker pull ${{ steps.docker_info.outputs.image_name }}"
-          echo "Lien Docker Hub: ${{ steps.docker_info.outputs.docker_hub_url_display }}"
           
       - name: Commenter la PR avec le lien Docker
         if: github.event_name == 'pull_request' && success()
@@ -191,7 +184,6 @@ jobs:
             const { issue: { number: issue_number }, repo: { owner, repo } } = context;
             const imageName = '${{ steps.docker_info.outputs.image_name }}';
             const dockerHubUrl = '${{ steps.docker_info.outputs.docker_hub_url }}';
-            const dockerHubDisplay = '${{ steps.docker_info.outputs.docker_hub_url_display }}';
             
             github.rest.issues.createComment({
               owner,
@@ -199,6 +191,6 @@ jobs:
               issue_number,
               body: `✅ **Image Docker Backend déployée avec succès !**
               - **Pull**: \`docker pull ${imageName}\`
-              - **Lien Docker Hub**: [${dockerHubDisplay}](${dockerHubUrl})
+              - **Lien Docker Hub**: [Docker Hub - Repository: bobapp-back](${dockerHubUrl})
               `
             });

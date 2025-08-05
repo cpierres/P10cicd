@@ -134,22 +134,7 @@ jobs:
           context: ./front
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-frontend:latest
-          
-      - name: Set Docker image info
-        if: success()
-        id: docker_info
-        run: |
-          echo "image_name=cpierres/bobapp-frontend:latest" >> $GITHUB_OUTPUT
-          echo "docker_hub_url=https://hub.docker.com/repository/docker/cpierres/bobapp-frontend/general" >> $GITHUB_OUTPUT
-          echo "docker_hub_url_display=https://hub.docker.com → Repository: bobapp-frontend" >> $GITHUB_OUTPUT
-          
-      - name: Afficher l'URL de l'image Docker
-        if: success()
-        run: |
-          echo "✅ Image Docker frontend publiée avec succès"
-          echo "Pour télécharger l'image: docker pull ${{ steps.docker_info.outputs.image_name }}"
-          echo "Lien Docker Hub: ${{ steps.docker_info.outputs.docker_hub_url_display }}"
-          
+
       - name: Commenter la PR avec le lien Docker
         if: github.event_name == 'pull_request' && success()
         uses: actions/github-script@v7
@@ -157,17 +142,13 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { issue: { number: issue_number }, repo: { owner, repo } } = context;
-            const imageName = '${{ steps.docker_info.outputs.image_name }}';
-            const dockerHubUrl = '${{ steps.docker_info.outputs.docker_hub_url }}';
-            const dockerHubDisplay = '${{ steps.docker_info.outputs.docker_hub_url_display }}';
-            
             github.rest.issues.createComment({
               owner,
               repo,
               issue_number,
               body: `✅ **Image Docker Frontend déployée avec succès !**
-              
-              - **Pull**: \`docker pull ${imageName}\`
-              - **Lien Docker Hub**: [${dockerHubDisplay}](${dockerHubUrl})
+
+              - **Pull**: \`docker pull cpierres/bobapp-frontend:latest\`
+              - **Lien Docker Hub**: [https://hub.docker.com/repository/docker/cpierres/bobapp-frontend/general](https://hub.docker.com/repository/docker/cpierres/bobapp-frontend/general)
               `
             });

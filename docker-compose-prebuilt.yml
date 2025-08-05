@@ -1,0 +1,26 @@
+version: '3.9'
+
+services:
+  bobapp-back:
+    image: cpierres/bobapp-back:latest
+    container_name: bobapp-back
+    ports:
+      - "8080:8080"
+    networks:
+      - bobapp-network
+    restart: unless-stopped
+
+  bobapp-front:
+    image: cpierres/bobapp-frontend:latest
+    container_name: bobapp-front
+    ports:
+      - "80:80"
+    depends_on:
+      - bobapp-back
+    networks:
+      - bobapp-network
+    restart: unless-stopped
+
+networks:
+  bobapp-network:
+    name: bobapp-network

@@ -31,7 +31,7 @@ public class JokeService {
     // méthode avec plusieurs branches conditionnelles et sans test pour stimuler sonar
     public String complexMethodWithoutTests(int value, String input) {
         logger.debug("Valeur: {}, Texte: {}", value, input);
-        logger.debug("Ajout d'un log 9 pour déclencher le test du workflow SonarQube");
+        logger.debug("Ajout d'un log 10 pour déclencher le test du workflow SonarQube par cpierres59");
         StringBuilder result = new StringBuilder();
 
         if (value > 100) {

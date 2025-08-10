@@ -39,3 +39,7 @@ build/
 .mvn
 
 .angular
+
+### MAC
+.DS_Store
+**/.DS_Store

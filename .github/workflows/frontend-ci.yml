@@ -112,7 +112,7 @@ jobs:
   # Job pour la construction de l'image Docker du frontend
   frontend-docker:
     # Exécuter si les tests ont réussi, indépendamment du résultat de SonarQube
-    needs: [frontend-tests, frontend-sonar]
+    needs: [frontend-tests]
     if: ${{ always() && needs.frontend-tests.result == 'success' }}
     runs-on: ubuntu-latest
 

@@ -9,13 +9,13 @@ on:
       - main
       - workflow-test-*   # Toutes les branches commençant par workflow-test- suivi de n'importe quoi
     paths:
-      - front/
+      - front/**
       - .github/workflows/frontend-ci.yml
   # Se déclenche lors d'une PR vers la branche main
   pull_request:
     branches: [ main ]
     paths:
-      - front/
+      - front/**
       - .github/workflows/frontend-ci.yml
   # Permet de déclencher manuellement le workflow
   workflow_dispatch:

@@ -147,7 +147,7 @@ jobs:
   # Job pour la construction de l'image Docker du backend
   backend-docker:
     # Exécuter si les tests ont réussi, indépendamment du résultat de SonarQube
-    needs: [backend-tests, backend-sonar]
+    needs: [backend-tests]
     if: ${{ always() && needs.backend-tests.result == 'success' }}
     runs-on: ubuntu-latest
 

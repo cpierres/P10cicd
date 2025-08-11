@@ -126,6 +126,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push frontend
+        id: docker-build
         uses: docker/build-push-action@v6
         with:
           context: ./front
@@ -133,7 +134,7 @@ jobs:
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-frontend:latest
 
       - name: Commenter la PR avec le lien Docker
-        if: github.event_name == 'pull_request' && success()
+        if: github.event_name == 'pull_request' && steps.docker-build.outcome == 'success'
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}

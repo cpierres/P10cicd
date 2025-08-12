@@ -16,11 +16,11 @@ export class AppComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    console.log("pseudo solution pour fix/front-avis1-soumission-blague-spinner")
     this.getRandomJoke();
   }
 
   public getRandomJoke(): void {
+    console.log("pseudo solution 1 pour fix/front-avis1-soumission-blague-spinner")
     this.jokesService.getRandomJoke();
   }
 }

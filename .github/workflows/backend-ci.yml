@@ -184,3 +184,24 @@ jobs:
               - **Lien Docker Hub**: [https://hub.docker.com/repository/docker/cpierres/bobapp-back/general](https://hub.docker.com/repository/docker/cpierres/bobapp-back/general)
               `
             });
+
+      - name: Commenter la PR avec le lien Docker (post-merge push)
+        if: github.event_name == 'push' && steps.docker-build.outcome == 'success'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { repo: { owner, repo }, sha } = context;
+            // Retrouver la PR associée au commit mergé
+            const prs = await github.rest.repos.listPullRequestsAssociatedWithCommit({ owner, repo, commit_sha: sha });
+            if (!prs.data.length) {
+              core.info('Aucune PR associée à ce commit, pas de commentaire post-merge.');
+              return;
+            }
+            const prNumber = prs.data[0].number;
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: prNumber,
+              body: `✅ **Image Docker Backend publiée après merge !**\n- **Pull**: \`docker pull cpierres/bobapp-back:latest\`\n- **Lien Docker Hub**: https://hub.docker.com/repository/docker/cpierres/bobapp-back/general`
+            });

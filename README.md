@@ -145,3 +145,14 @@ docker run -p 8080:8080 --name bobapp-back -d cpierres/bobapp-back:latest
 # Exécuter le frontend
 docker run -p 80:80 --name bobapp-front -d cpierres/bobapp-frontend:latest
 ```
+
+
+
+## Releases & Changelog (release-please)
+
+Ce dépôt utilise release-please pour générer automatiquement des PR de release, mettre à jour les CHANGELOG.md et créer des tags/Releases.
+
+- Workflow: .github/workflows/release-please.yml
+- Config: .release-please-config.json
+- Manifest: .release-please-manifest.json
+- Documentation: [release-please.md](./release-please.md)

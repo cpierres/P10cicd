@@ -40,7 +40,3 @@ Remarque : par défaut, release-please n’écrit pas directement sur `main` ; i
   - Oui : release-please analysera chacun et n’ouvrira une PR que pour le composant modifié.
 - Où sont les changelogs ?
   - Dans chaque composant : `back/CHANGELOG.md` et `front/CHANGELOG.md`.
-- Est-ce compatible avec vos protections de branches et CODEOWNERS ?
-  - Oui : release-please crée des PR ; vous gardez la validation manuelle via vos règles existantes.
-- Pour changer les types de commits pris en compte
-  - adapter `changelog-types` dans `.release-please-config.json` ou adopter les Conventional Commits pour un changelog plus expressif.

@@ -137,7 +137,7 @@ jobs:
           SONAR_HOST_URL: https://sonarqube.cpierres.dscloud.me
         working-directory: ./back
         # Ne pas rebuilder ni lancer les tests puisque cela a été fait préalablement avec le "bon JDK 11"
-        run: mvn -B sonar:sonar -DskipTests=true -Dsonar.projectKey=cpierres_P10cicd-backend
+        run: mvn -B sonar:sonar -DskipTests=true -Dsonar.projectKey=cpierres_P10cicd-backend -Dsonar.projectName=P10cicd-backend
 
       - name: Lien SonarQube Backend
         if: always()

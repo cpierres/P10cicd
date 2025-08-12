@@ -16,6 +16,7 @@ export class AppComponent implements OnInit {
   }
 
   public ngOnInit(): void {
+    console.log("pseudo solution pour fix/front-avis1-soumission-blague-spinner")
     this.getRandomJoke();
   }
 

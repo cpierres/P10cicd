@@ -1,13 +1,10 @@
 name: Release Please
 
 on:
-  push:
-    branches:
-      - workflow-test-*  # Pour les tests
   workflow_run:
     workflows: ["Backend CI", "Frontend CI"]
     types: [completed]
-    branches: [main]  # Pour la production
+    branches: [main, workflow-test-*]  # Pour la production et les tests
   workflow_dispatch:
 
 permissions:

@@ -1,0 +1,10 @@
+{
+  "packages": {
+    "back": {
+      "package-name": "bobapp-back",
+      "release-type": "java",
+      "include-component-in-tag": true,
+      "component": "bobapp-back"
+    }
+  }
+}

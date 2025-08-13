@@ -1,13 +1,12 @@
 name: Release Please
 
 on:
-  push:
-    branches:
-      - workflow-test-*  # Pour les tests
   workflow_run:
     workflows: ["Backend CI", "Frontend CI"]
     types: [completed]
-    branches: [main]  # Pour la production
+    branches: 
+      - main
+      - workflow-test-**
   workflow_dispatch:
 
 permissions:
@@ -19,7 +18,7 @@ permissions:
 jobs:
   release-please-backend:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' || github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -34,8 +33,9 @@ jobs:
 
   release-please-frontend:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' || github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     steps:
+      - uses: actions/checkout@v4
       - uses: actions/checkout@v4
       - uses: googleapis/release-please-action@v3
         with:

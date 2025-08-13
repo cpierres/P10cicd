@@ -1,0 +1,28 @@
+# Changelog
+
+## 1.0.0 (2025-08-13)
+
+
+### Features
+
+* **backend:** ajout log test 4 ([#48](https://github.com/cpierres/P10cicd/issues/48)) ([f49ce06](https://github.com/cpierres/P10cicd/commit/f49ce063055e85293356773a3dcfde5906a1223f))
+* **backend:** ajout log test 5 ([#54](https://github.com/cpierres/P10cicd/issues/54)) ([62429e1](https://github.com/cpierres/P10cicd/commit/62429e1097c77250c2f7421e0932a20654ed3272))
+* **backend:** ajout log test 6 ([#55](https://github.com/cpierres/P10cicd/issues/55)) ([c283676](https://github.com/cpierres/P10cicd/commit/c28367692f9cf9356a78d283f16ef601abefece7))
+* **backend:** ajout log test2 ([a017d00](https://github.com/cpierres/P10cicd/commit/a017d005596b1f99cc07c98247e9e8cdf1f62841))
+* **backend:** ajout log test2 ([06331b9](https://github.com/cpierres/P10cicd/commit/06331b96075926072e0c2e0b7fc9f06d7ebbb769))
+* **backend:** ajouter log de démarrage de l'application ([c3c0ea5](https://github.com/cpierres/P10cicd/commit/c3c0ea53248cabbf5d1e75c45e0e6067f501c3dc))
+* **backend:** ajouter log de démarrage de l'application ([5da53cd](https://github.com/cpierres/P10cicd/commit/5da53cdb59a684f64da09d37dbee9b1f86f515e5))
+* **backend:** déclencher Backend CI pour tester synchronisation release-please 11 ([#57](https://github.com/cpierres/P10cicd/issues/57)) ([c0d4cf6](https://github.com/cpierres/P10cicd/commit/c0d4cf6ed770660d436a8d9bc192b7ed8d115eed))
+* **backend:** déclencher Backend CI pour tester synchronisation release-please 12 ([#58](https://github.com/cpierres/P10cicd/issues/58)) ([a83ab5e](https://github.com/cpierres/P10cicd/commit/a83ab5edb36a68dd75563fab886687319f34e282))
+* **backend:** déclencher Backend CI pour tester synchronisation release-please 13 ([#59](https://github.com/cpierres/P10cicd/issues/59)) ([c46381b](https://github.com/cpierres/P10cicd/commit/c46381ba4288bea351ac260f86103c71e59eac5b))
+* **backend:** déclencher Backend CI pour tester synchronisation release-please 15 ([#60](https://github.com/cpierres/P10cicd/issues/60)) ([dfe4bbd](https://github.com/cpierres/P10cicd/commit/dfe4bbd808fccbf55d5f1b56c3a1d2b9c2bf3202))
+* **backend:** déclencher Backend CI pour tester synchronisation release-please 16 ([#62](https://github.com/cpierres/P10cicd/issues/62)) ([c5252e2](https://github.com/cpierres/P10cicd/commit/c5252e2701e5997c71474abdc0826865961a83fd))
+* **backend:** déclencher Backend CI pour tester synchronisation release-please 17 ([#63](https://github.com/cpierres/P10cicd/issues/63)) ([105cc73](https://github.com/cpierres/P10cicd/commit/105cc73d802a8b2e038cd821e4b3349658d88123))
+* **backend:** déclencher Backend CI pour tester synchronisation release-please 18 ([#64](https://github.com/cpierres/P10cicd/issues/64)) ([79c416b](https://github.com/cpierres/P10cicd/commit/79c416b77b647b31de980afe70018155f2d08eb6))
+* **backend:** déclencher Backend CI pour tester synchronisation release-please 19 ([#66](https://github.com/cpierres/P10cicd/issues/66)) ([d2dece2](https://github.com/cpierres/P10cicd/commit/d2dece2d3af38923646c587d356f459d8e353fd6))
+* déclencher Backend CI pour tester synchronisation release-please 20 ([#67](https://github.com/cpierres/P10cicd/issues/67)) ([5204b06](https://github.com/cpierres/P10cicd/commit/5204b068a87d37ecb6d4c8d91a5068d792ad0335))
+
+
+### Bug Fixes
+
+* exclure de sonar ces fichiers qui n'auraient pas dû être versionnés ([d5a3396](https://github.com/cpierres/P10cicd/commit/d5a3396f638e70000185e1a813f84370cec877ab))

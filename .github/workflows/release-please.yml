@@ -30,6 +30,7 @@ jobs:
           release-type: java
           package-name: bobapp-back
           path: back
+          bootstrap-sha: 9b1264a09a48cd5394e366209efad11383602ac6
 
   release-please-frontend:
     runs-on: ubuntu-latest

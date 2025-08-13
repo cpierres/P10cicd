@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.openclassrooms</groupId>
 	<artifactId>bobapp</artifactId>
-	<version>1.0.0</version>
+	<version>0.0.0</version>
 	<name>bobapp</name>
 	<description>L'application de joke par excellence !</description>
 	<properties>

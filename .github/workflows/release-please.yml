@@ -1,10 +1,15 @@
 name: Release Please
 
 on:
+  push:
+    branches:
+      - workflow-test-release-please-pom-initial  # Temporaire pour déboguer
   workflow_run:
     workflows: ["Backend CI", "Frontend CI"]
     types: [completed]
-    branches: [main, workflow-test-*]  # Pour la production et les tests
+    branches: 
+      - main
+      - workflow-test-**
   workflow_dispatch:
 
 permissions:

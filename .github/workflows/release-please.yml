@@ -29,7 +29,7 @@ jobs:
           release-type: java
           package-name: bobapp-back
           path: back
-          #default-branch: ${{ github.ref_name }}
+          bootstrap-sha: be89a4f238e2d0fe4a0d2b40a20b9fda12bc61e5
 
   release-please-frontend:
     runs-on: ubuntu-latest

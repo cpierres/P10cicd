@@ -1,0 +1,10 @@
+{
+  "packages": {
+    "front": {
+      "package-name": "bobapp-frontend",
+      "release-type": "node",
+      "include-component-in-tag": true,
+      "component": "bobapp-frontend"
+    }
+  }
+}

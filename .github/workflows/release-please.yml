@@ -1,10 +1,13 @@
 name: Release Please
 
 on:
+  push:
+    branches:
+      - workflow-test-*  # Pour les tests
   workflow_run:
     workflows: ["Backend CI", "Frontend CI"]
     types: [completed]
-    branches: [main]
+    branches: [main]  # Pour la production
   workflow_dispatch:
 
 permissions:
@@ -14,21 +17,22 @@ permissions:
   repository-projects: write
 
 jobs:
-  release-please-backend:
-    runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: googleapis/release-please-action@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          release-type: java
-          package-name: bobapp-back
-          path: back
+  # release-please-backend:
+  #   runs-on: ubuntu-latest
+  #   if: ${{ github.event_name == 'push' || github.event.workflow_run.conclusion == 'success' }}
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: googleapis/release-please-action@v3
+  #       with:
+  #         token: ${{ secrets.GITHUB_TOKEN }}
+  #         release-type: java
+  #         package-name: bobapp-back
+  #         path: back
+  #         bootstrap-sha: f49ce06075926072e0c2e0b7fc9f06d7ebbb769
 
   release-please-frontend:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name == 'push' || github.event.workflow_run.conclusion == 'success' }}
     steps:
       - uses: actions/checkout@v4
       - uses: googleapis/release-please-action@v3

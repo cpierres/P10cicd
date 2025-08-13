@@ -1,15 +1,16 @@
 {
-  "bootstrap-sha": "HEAD",
   "packages": {
     "back": {
       "package-name": "bobapp-back",
       "release-type": "java",
-      "include-component-in-tag": true
+      "include-component-in-tag": true,
+      "component": "bobapp-back"
     },
     "front": {
-      "package-name": "bobapp-frontend",
+      "package-name": "bobapp-frontend", 
       "release-type": "node",
-      "include-component-in-tag": true
+      "include-component-in-tag": true,
+      "component": "bobapp-frontend"
     }
   }
 }

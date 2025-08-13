@@ -30,6 +30,7 @@ jobs:
           package-name: bobapp-back
           path: back
           bootstrap-sha: fa6907a57d7d0d68a5f099d6469b5a358db6b9cd
+          include-component-in-tag: true
 
   release-please-frontend:
     runs-on: ubuntu-latest
@@ -43,3 +44,4 @@ jobs:
           release-type: node
           package-name: bobapp-frontend
           path: front
+          include-component-in-tag: true

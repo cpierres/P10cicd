@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/cpierres/P10cicd/compare/bobapp-back-v1.1.0...bobapp-back-v1.2.0) (2025-08-14)
+
+
+### Features
+
+* **backend:** déclencher Backend CI pour tester synchronisation release-please avec log 23 ([#74](https://github.com/cpierres/P10cicd/issues/74)) ([8c8d0fd](https://github.com/cpierres/P10cicd/commit/8c8d0fdd048d71508accd8f571c5e5afaf7db6ce))
+
 ## [1.1.0](https://github.com/cpierres/P10cicd/compare/bobapp-back-v1.0.0...bobapp-back-v1.1.0) (2025-08-14)
 
 

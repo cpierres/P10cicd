@@ -11,6 +11,7 @@ public class BobappApplication {
 
     public static void main(String[] args) {
         logger.info("Starting BobApp Backend... test 26 feat !");
+        logger.info("Starting BobApp Backend... test 27 fix !");
         SpringApplication.run(BobappApplication.class, args);
         logger.info("✅ BobApp Backend démarré avec succès!");
     }

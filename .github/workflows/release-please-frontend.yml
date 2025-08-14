@@ -10,6 +10,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  issues: write
 
 jobs:
   release-please-frontend:
@@ -17,8 +18,9 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
     steps:
       - uses: actions/checkout@v4
-      - uses: googleapis/release-please-action@v4
+      - uses: googleapis/release-please-action@v4.1.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           config-file: .github/release-please-config-frontend.json
           manifest-file: .github/.release-please-manifest-frontend.json
+          include-component-in-tag: true

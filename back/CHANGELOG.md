@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.0](https://github.com/cpierres/P10cicd/compare/bobapp-back-v1.0.0...bobapp-back-v1.1.0) (2025-08-14)
+
+
+### Features
+
+* **backend:** déclencher Backend CI pour tester synchronisation release-please avec log 21 ([#69](https://github.com/cpierres/P10cicd/issues/69)) ([513b11e](https://github.com/cpierres/P10cicd/commit/513b11e73e44bc4d3a207da745893590c039e018))
+* **backend:** déclencher Backend CI pour tester synchronisation release-please avec log 22 ([#70](https://github.com/cpierres/P10cicd/issues/70)) ([e15573f](https://github.com/cpierres/P10cicd/commit/e15573fa40d243de166147f2c2ff9cd6f37561f4))
+
+
+### Bug Fixes
+
+* retour à la configuration d'origine plus simple (et nettoyage) ([64a7b0b](https://github.com/cpierres/P10cicd/commit/64a7b0beb6ce31719ee5e8f4379a3f3a79d26b1f))
+
 ## 1.0.0 (2025-08-13)
 
 

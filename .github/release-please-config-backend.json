@@ -12,7 +12,8 @@
           "xpath": "/project/version"
         }
       ],
-      "snapshot": false
+      "snapshot": false,
+      "separate-pull-requests": false
     }
   }
 }

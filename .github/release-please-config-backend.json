@@ -6,7 +6,7 @@
       "include-component-in-tag": true,
       "component": "bobapp-back",
       "extra-files": [
-        "back/pom.xml"
+        "pom.xml"
       ]
     }
   }

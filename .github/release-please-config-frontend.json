@@ -4,9 +4,7 @@
       "package-name": "bobapp-frontend",
       "release-type": "node",
       "include-component-in-tag": true,
-      "component": "bobapp-frontend",
-      "snapshot": false,
-      "separate-pull-requests": false
+      "component": "bobapp-frontend"
     }
   }
 }

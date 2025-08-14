@@ -24,3 +24,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           config-file: .github/release-please-config-backend.json
           manifest-file: .github/.release-please-manifest-backend.json
+          include-component-in-tag: true

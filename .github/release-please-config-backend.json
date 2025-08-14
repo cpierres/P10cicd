@@ -4,7 +4,10 @@
       "package-name": "bobapp-back",
       "release-type": "java",
       "include-component-in-tag": true,
-      "component": "bobapp-back"
+      "component": "bobapp-back",
+      "extra-files": [
+        "back/pom.xml"
+      ]
     }
   }
 }

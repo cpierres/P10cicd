@@ -2,6 +2,12 @@ name: Test Script Parsing
 
 on:
   workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Tag à tester'
+        required: true
+        default: 'back-v1.2.3'
+
 
 jobs:
   test-parsing:
@@ -33,3 +39,19 @@ jobs:
           else 
             echo "❌ No match front-v*"
           fi
+
+      - name: Test avec tag personnalisé
+        shell: bash
+        env:
+          GITHUB_REF_NAME: ${{ github.event.inputs.tag_name }}
+        run: |
+          echo "=== Test avec: ${GITHUB_REF_NAME} ==="
+          
+          REF_NAME="${GITHUB_REF_NAME}"
+          if [[ "$REF_NAME" == back-v* ]]; then echo "component=back" >> $GITHUB_OUTPUT; fi
+          if [[ "$REF_NAME" == front-v* ]]; then echo "component=front" >> $GITHUB_OUTPUT; fi
+          VERSION="${REF_NAME#*-v}"
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          
+          echo "=== Résultats ==="
+          cat $GITHUB_OUTPUT

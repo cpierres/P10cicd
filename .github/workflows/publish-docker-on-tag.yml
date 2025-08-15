@@ -1,0 +1,35 @@
+name: Test Script Parsing
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-parsing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Debug - Afficher toutes les variables
+        shell: bash
+        run: |
+          echo "=== Variables GitHub ==="
+          echo "GITHUB_REF_NAME: ${GITHUB_REF_NAME}"
+          echo "GITHUB_REF: ${GITHUB_REF}"
+          echo "GITHUB_EVENT_NAME: ${GITHUB_EVENT_NAME}"
+          
+          echo "=== Test du parsing ==="
+          REF_NAME="${GITHUB_REF_NAME}"
+          echo "REF_NAME: $REF_NAME"
+          echo "Component (extraction): ${REF_NAME%%-*}"
+          echo "Version (extraction): ${REF_NAME#*-v}"
+          
+          echo "=== test Pattern ==="
+          if [[ "$REF_NAME" == back-v* ]]; then 
+            echo "✅ Match back-v*"
+          else 
+            echo "❌ No match back-v*"
+          fi
+          
+          if [[ "$REF_NAME" == front-v* ]]; then 
+            echo "✅ Match front-v*"
+          else 
+            echo "❌ No match front-v*"
+          fi

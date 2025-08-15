@@ -6,7 +6,7 @@ on:
       - bobapp-back-v*
       - bobapp-frontend-v*
   release:
-    types: [published]
+    types: [created, published]
 
 #  branches:
 #    - workflow-test-*

@@ -5,6 +5,9 @@ on:
     tags:
       - bobapp-back-v*
       - bobapp-frontend-v*
+  release:
+    types: [published]
+
 #  branches:
 #    - workflow-test-*
 #  workflow_dispatch:

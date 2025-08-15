@@ -21,9 +21,122 @@ jobs:
         with:
           fetch-depth: 0
       - uses: googleapis/release-please-action@v4.1.0
+        id: release_please
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           config-file: .github/release-please-config-backend.json
           manifest-file: .github/.release-please-manifest-backend.json
           include-component-in-tag: true
           #skip-labeling: true
+
+      - name: Debug - Variables et outputs Release Please
+        shell: bash
+        run: |
+          echo "=== GitHub Context ==="
+          echo "event_name: $GITHUB_EVENT_NAME"
+          echo "ref:        $GITHUB_REF"
+          echo "ref_name:   $GITHUB_REF_NAME"
+          echo "sha:        $GITHUB_SHA"
+          echo "workflow:   $GITHUB_WORKFLOW"
+          echo
+          echo "=== Outputs Release Please (manifest-scoped) ==="
+          echo "back--release_created: ${{ steps.release_please.outputs['back--release_created'] }}"
+          echo "back--tag_name:        ${{ steps.release_please.outputs['back--tag_name'] }}"
+          echo "back--major:           ${{ steps.release_please.outputs['back--major'] }}"
+          echo "back--minor:           ${{ steps.release_please.outputs['back--minor'] }}"
+          echo
+          echo "=== Outputs Release Please (fallback génériques) ==="
+          echo "release_created:        ${{ steps.release_please.outputs.release_created }}"
+          echo "releases_created:       ${{ steps.release_please.outputs.releases_created }}"
+          echo "tag_name:               ${{ steps.release_please.outputs.tag_name }}"
+          echo "major:                  ${{ steps.release_please.outputs.major }}"
+          echo "minor:                  ${{ steps.release_please.outputs.minor }}"
+
+      - name: Login to Docker Hub
+        if: ${{ steps.release_please.outputs['back--release_created'] == 'true' || steps.release_please.outputs.release_created == 'true' }}
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Déterminer la version d'image
+        id: info
+        if: ${{ steps.release_please.outputs['back--release_created'] == 'true' || steps.release_please.outputs.release_created == 'true' }}
+        shell: bash
+        env:
+          BACK_TAG: ${{ steps.release_please.outputs['back--tag_name'] }}
+          GENERIC_TAG: ${{ steps.release_please.outputs.tag_name }}
+        run: |
+          TAG=""
+          if [[ -n "$BACK_TAG" ]]; then
+            TAG="$BACK_TAG"
+          elif [[ -n "$GENERIC_TAG" ]]; then
+            TAG="$GENERIC_TAG"
+          fi
+
+          if [[ -z "$TAG" ]]; then
+            echo "Aucun tag_name disponible (aucune release créée ou sortie indisponible). Skip."
+            exit 0
+          fi
+
+          # Extrait la version: supporte "bobapp-back-vX.Y.Z" ou "vX.Y.Z"
+          if [[ "$TAG" == *"-v"* ]]; then
+            VERSION="${TAG##*-v}"
+          else
+            VERSION="${TAG#v}"
+          fi
+
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Tag détecté: ${TAG} -> version=${VERSION}"
+
+      - name: Build and push Docker image (latest + version)
+        if: ${{ steps.release_please.outputs['back--release_created'] == 'true' || steps.release_please.outputs.release_created == 'true' }}
+        id: docker-build-release
+        uses: docker/build-push-action@v6.18.0
+        with:
+          context: ./back
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-backend:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-backend:${{ steps.info.outputs.version }}
+          labels: |
+            org.opencontainers.image.source=${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.version=${{ steps.info.outputs.version }}
+
+      - name: Commenter la PR de release avec les tags Docker
+        if: ${{ (steps.release_please.outputs['back--release_created'] == 'true' || steps.release_please.outputs.release_created == 'true') && steps.docker-build-release.outcome == 'success' }}
+        uses: actions/github-script@v7
+        env:
+          DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+          IMG_VERSION: ${{ steps.info.outputs.version }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { repo: { owner, repo }, sha } = context;
+            const user = process.env.DOCKER_USER;
+            const version = process.env.IMG_VERSION;
+
+            // Retrouver la PR associée au commit (PR de release mergée)
+            const prs = await github.rest.repos.listPullRequestsAssociatedWithCommit({ owner, repo, commit_sha: sha });
+            if (!prs.data.length) {
+              core.info('Aucune PR associée à ce commit. Aucun commentaire publié.');
+              return;
+            }
+            const prNumber = prs.data[0].number;
+
+            const lines = [
+              `✅ **Images Docker Backend publiées pour la release ${version}**`,
+              '',
+              `- Pull (latest): \`docker pull ${user}/bobapp-backend:latest\``,
+              `- Pull (version): \`docker pull ${user}/bobapp-backend:${version}\``,
+              `- Lien Docker Hub: https://hub.docker.com/repository/docker/${user}/bobapp-backend/general`
+            ];
+            const body = lines.join('\n');
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: prNumber,
+              body
+            })

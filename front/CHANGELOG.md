@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/cpierres/P10cicd/compare/bobapp-frontend-v1.1.2...bobapp-frontend-v2.0.0) (2025-08-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* **front:** explication du breaking change
+
+### Features
+
+* **front:** le breaking change number 4 ([8ee9724](https://github.com/cpierres/P10cicd/commit/8ee9724e6bd2d5e7a4266eaabe39182d39435c6a))
+
 ## [1.1.2](https://github.com/cpierres/P10cicd/compare/bobapp-frontend-v1.1.1...bobapp-frontend-v1.1.2) (2025-08-15)
 
 

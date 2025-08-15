@@ -156,3 +156,17 @@ Ce dépôt utilise release-please pour générer automatiquement des PR de relea
 - Config: .release-please-config.json
 - Manifest: .release-please-manifest.json
 - Documentation: [release-please.md](./release-please.md)
+
+
+
+## Publication des images Docker versionnées
+
+Les images Docker back et front sont aussi publiées lors des tags créés par release-please (ex.: `back-vX.Y.Z`, `front-vX.Y.Z`). Un workflow dédié construit et pousse :
+- `:latest`
+- `:X.Y.Z` (tag de version issu du tag Git)
+
+Workflow: `.github/workflows/publish-docker-on-tag.yml`
+
+Exemples de pull:
+- Backend: `docker pull cpierres/bobapp-back:1.2.3`
+- Frontend: `docker pull cpierres/bobapp-frontend:1.2.3`

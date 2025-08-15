@@ -3,8 +3,8 @@ name: Publish Docker on Tag
 on:
   push:
     tags:
-      - back-v*
-      - front-v*
+      - bobapp-back-v*
+      - bobapp-frontend-v*
 #  branches:
 #    - workflow-test-*
 #  workflow_dispatch:
@@ -84,11 +84,11 @@ jobs:
         id: info
         shell: bash
         run: |
-          REF_NAME="${GITHUB_REF_NAME}"  # exemples : back-v1.2.3 ou front-v1.2.3
-          if [[ "$REF_NAME" == back-v* ]]; then echo "component=back" >> $GITHUB_OUTPUT; fi
-          if [[ "$REF_NAME" == front-v* ]]; then echo "component=front" >> $GITHUB_OUTPUT; fi
-          # Extract the part after '-v'
-          VERSION="${REF_NAME#*-v}" # back-v1.2.3 devient 1.2.3
+          REF_NAME="${GITHUB_REF_NAME}"  # exemples : bobapp-back-v1.2.3 ou bobapp-frontend-v1.2.3
+          if [[ "$REF_NAME" == bobapp-back-v* ]]; then echo "component=back" >> $GITHUB_OUTPUT; fi
+          if [[ "$REF_NAME" == bobapp-frontend-v* ]]; then echo "component=front" >> $GITHUB_OUTPUT; fi
+          # Extraire la partie après le dernier '-v'
+          VERSION="${REF_NAME##*-v}" # bobapp-back-v1.2.3 devient 1.2.3
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
           echo "Infos : component=${REF_NAME%%-*}, path=${{ steps.info.outputs.component }}, version=${VERSION}"
 

@@ -2,6 +2,9 @@ name: Test Script Parsing
 
 on:
   workflow_dispatch:
+    branches:
+      - 'workflow-test-*'
+      - 'main'
     inputs:
       tag_name:
         description: 'Tag à tester'

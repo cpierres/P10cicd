@@ -111,9 +111,9 @@ jobs:
 
   # Job pour la construction de l'image Docker du frontend
   frontend-docker:
-    # Exécuter si les tests ont réussi, indépendamment du résultat de SonarQube
+    # Exécuter uniquement pour les PR et si les tests ont réussi
     needs: [frontend-tests]
-    if: ${{ always() && needs.frontend-tests.result == 'success' }}
+    if: ${{ github.event_name == 'pull_request' && needs.frontend-tests.result == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -125,13 +125,21 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push frontend
+      - name: Préparer les variables d'image
+        id: vars
+        shell: bash
+        run: |
+          echo "short_sha=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Build and push frontend (PR preview)
         id: docker-build
         uses: docker/build-push-action@v6
         with:
           context: ./front
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-frontend:latest
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-frontend:pr-${{ github.event.pull_request.number }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-frontend:pr-${{ github.event.pull_request.number }}-${{ steps.vars.outputs.short_sha }}
 
       - name: Commenter la PR avec le lien Docker
         if: github.event_name == 'pull_request' && steps.docker-build.outcome == 'success'
@@ -140,33 +148,22 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { issue: { number: issue_number }, repo: { owner, repo } } = context;
-            github.rest.issues.createComment({
-              owner,
-              repo,
-              issue_number,
-              body: `✅ **Image Docker Frontend déployée avec succès !**
+            const user = '${{ secrets.DOCKERHUB_USERNAME }}';
+            const prTag = `pr-${issue_number}`;
+            const shaTag = `pr-${issue_number}-${{ steps.vars.outputs.short_sha }}`;
 
-              - **Pull**: \`docker pull cpierres/bobapp-frontend:latest\`
-              - **Lien Docker Hub**: [https://hub.docker.com/repository/docker/cpierres/bobapp-frontend/general](https://hub.docker.com/repository/docker/cpierres/bobapp-frontend/general)
-              `
-            });
+            const lines = [
+              `✅ **Image Docker Frontend (preview) disponible pour la PR #${issue_number} !**`,
+              '',
+              `- Pull (tag PR): \`docker pull ${user}/bobapp-frontend:${prTag}\``,
+              `- Pull (tag PR+SHA): \`docker pull ${user}/bobapp-frontend:${shaTag}\``,
+              `- Lien Docker Hub: https://hub.docker.com/repository/docker/${user}/bobapp-frontend/general`
+            ];
+            const body = lines.join('\n');
 
-      - name: Commenter la PR avec le lien Docker (post-merge push)
-        if: github.event_name == 'push' && steps.docker-build.outcome == 'success'
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { repo: { owner, repo }, sha } = context;
-            const prs = await github.rest.repos.listPullRequestsAssociatedWithCommit({ owner, repo, commit_sha: sha });
-            if (!prs.data.length) {
-              core.info('Aucune PR associée à ce commit, pas de commentaire post-merge.');
-              return;
-            }
-            const prNumber = prs.data[0].number;
             await github.rest.issues.createComment({
               owner,
               repo,
-              issue_number: prNumber,
-              body: `✅ **Image Docker Frontend publiée après merge !**\n- **Pull**: \`docker pull cpierres/bobapp-frontend:latest\`\n- **Lien Docker Hub**: https://hub.docker.com/repository/docker/cpierres/bobapp-frontend/general`
+              issue_number,
+              body
             });

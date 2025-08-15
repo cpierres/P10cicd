@@ -88,7 +88,7 @@ jobs:
             VERSION="${TAG#v}"
           fi
 
-          echo "component=front" >> "$GITHUB_OUTPUT"
+          echo "component=frontend" >> "$GITHUB_OUTPUT"
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
           echo "Tag détecté: ${TAG} -> version=${VERSION}"
 
@@ -99,8 +99,8 @@ jobs:
           context: ./front
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-${{ steps.info.outputs.component }}:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-${{ steps.info.outputs.component }}:${{ steps.info.outputs.version }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-frontend:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-frontend:${{ steps.info.outputs.version }}
           labels: |
             org.opencontainers.image.source=${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}

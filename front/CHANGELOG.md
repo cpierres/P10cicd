@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.1](https://github.com/cpierres/P10cicd/compare/bobapp-frontend-v2.1.0...bobapp-frontend-v2.1.1) (2025-08-15)
+
+
+### Bug Fixes
+
+* **frontend:** déclencher Frontend CI pour tester version docker log fix 2024 ([76a42f9](https://github.com/cpierres/P10cicd/commit/76a42f98b687d6d3aa75dd9d9d0b5de96968b2ea))
+
 ## [2.1.0](https://github.com/cpierres/P10cicd/compare/bobapp-frontend-v2.0.0...bobapp-frontend-v2.1.0) (2025-08-15)
 
 

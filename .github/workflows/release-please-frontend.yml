@@ -94,6 +94,7 @@ jobs:
 
       - name: Build and push Docker image (latest + version)
         if: ${{ steps.release_please.outputs['front--release_created'] == 'true' || steps.release_please.outputs.release_created == 'true' }}
+        id: docker-build-release
         uses: docker/build-push-action@v6.18.0
         with:
           context: ./front
@@ -105,3 +106,40 @@ jobs:
             org.opencontainers.image.source=${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.version=${{ steps.info.outputs.version }}
+
+      - name: Commenter la PR de release avec les tags Docker
+        if: ${{ (steps.release_please.outputs['front--release_created'] == 'true' || steps.release_please.outputs.release_created == 'true') && steps.docker-build-release.outcome == 'success' }}
+        uses: actions/github-script@v7
+        env:
+          DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+          IMG_VERSION: ${{ steps.info.outputs.version }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { repo: { owner, repo }, sha } = context;
+            const user = process.env.DOCKER_USER;
+            const version = process.env.IMG_VERSION;
+
+            // Retrouver la PR associée au commit (PR de release mergée)
+            const prs = await github.rest.repos.listPullRequestsAssociatedWithCommit({ owner, repo, commit_sha: sha });
+            if (!prs.data.length) {
+              core.info('Aucune PR associée à ce commit. Aucun commentaire publié.');
+              return;
+            }
+            const prNumber = prs.data[0].number;
+
+            const lines = [
+              `✅ **Images Docker Frontend publiées pour la release ${version}**`,
+              '',
+              `- Pull (latest): \`docker pull ${user}/bobapp-frontend:latest\``,
+              `- Pull (version): \`docker pull ${user}/bobapp-frontend:${version}\``,
+              `- Lien Docker Hub: https://hub.docker.com/repository/docker/${user}/bobapp-frontend/general`
+            ];
+            const body = lines.join('\n');
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: prNumber,
+              body
+            });

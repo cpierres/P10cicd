@@ -45,12 +45,13 @@ jobs:
 
       - name: Test avec tag personnalisé
         shell: bash
-        env:
-          GITHUB_REF_NAME: ${{ github.event.inputs.tag_name }}
         run: |
-          echo "=== Test avec: ${GITHUB_REF_NAME} ==="
+          echo "=== Input reçu: ${{ github.event.inputs.tag_name }} ==="
+          echo "=== Test avec tag input ==="
           
-          REF_NAME="${GITHUB_REF_NAME}"
+          REF_NAME="${{ github.event.inputs.tag_name }}"
+          echo "REF_NAME testé: $REF_NAME"
+
           if [[ "$REF_NAME" == back-v* ]]; then echo "component=back" >> $GITHUB_OUTPUT; fi
           if [[ "$REF_NAME" == front-v* ]]; then echo "component=front" >> $GITHUB_OUTPUT; fi
           VERSION="${REF_NAME#*-v}"

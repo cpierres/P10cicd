@@ -27,6 +27,33 @@ jobs:
           config-file: .github/release-please-config-frontend.json
           manifest-file: .github/.release-please-manifest-frontend.json
 
+      - name: Debug - Variables et outputs Release Please
+        shell: bash
+        run: |
+            echo "=== GitHub Context ==="
+            echo "event_name: $GITHUB_EVENT_NAME"
+            echo "ref:        $GITHUB_REF"
+            echo "ref_name:   $GITHUB_REF_NAME"
+            echo "sha:        $GITHUB_SHA"
+            echo "actor:      $GITHUB_ACTOR"
+            echo "workflow:   $GITHUB_WORKFLOW"
+            echo "run_id:     $GITHUB_RUN_ID"
+            echo "run_number: $GITHUB_RUN_NUMBER"
+            echo
+            echo "=== Outputs Release Please (manifest-scoped) ==="
+            echo "front--release_created: ${{ steps.release_please.outputs['front--release_created'] }}"
+            echo "front--tag_name:        ${{ steps.release_please.outputs['front--tag_name'] }}"
+            echo "front--major:           ${{ steps.release_please.outputs['front--major'] }}"
+            echo "front--minor:           ${{ steps.release_please.outputs['front--minor'] }}"
+            echo
+            echo "=== Outputs Release Please (fallback génériques) ==="
+            echo "release_created:        ${{ steps.release_please.outputs.release_created }}"
+            echo "releases_created:       ${{ steps.release_please.outputs.releases_created }}"
+            echo "tag_name:               ${{ steps.release_please.outputs.tag_name }}"
+            echo "major:                  ${{ steps.release_please.outputs.major }}"
+            echo "minor:                  ${{ steps.release_please.outputs.minor }}"
+
+
       - name: Login to Docker Hub
         if: ${{ steps.release_please.outputs.release_created == 'true' || steps.release_please.outputs.releases_created == 'true' }}
         uses: docker/login-action@v3

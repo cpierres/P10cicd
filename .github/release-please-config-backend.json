@@ -7,7 +7,14 @@
       "include-component-in-tag": true,
       "component": "bobapp-back",
       "snapshot": false,
-      "separate-pull-requests": false
+      "separate-pull-requests": false,
+      "extra-files": [
+        {
+          "type": "xml",
+          "path": "pom.xml",
+          "xpath": "/project/version"
+        }
+      ]
     }
   }
 }

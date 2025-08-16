@@ -16,7 +16,7 @@ export class AppComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    console.log("log de test FEAT   1825 - fix 2333");
+    console.log("fix du bug : Impossible de poster une suggestion de blague, le bouton tourne et fait planter mon navigateur");
     console.log("the breaking change 4 est là !")
     this.getRandomJoke();
   }

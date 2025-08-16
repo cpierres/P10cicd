@@ -10,7 +10,7 @@ public class BobappApplication {
     private static final Logger logger = LoggerFactory.getLogger(BobappApplication.class);
 
     public static void main(String[] args) {
-        logger.info("Starting BobApp Backend... test 0948 feat !");
+        logger.info("Starting BobApp Backend... test 1648 feat !");
         SpringApplication.run(BobappApplication.class, args);
     }
 }

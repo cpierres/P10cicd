@@ -1,6 +1,7 @@
 {
   "packages": {
     "back": {
+      "path": "back",
       "package-name": "bobapp-back",
       "release-type": "java",
       "include-component-in-tag": true,

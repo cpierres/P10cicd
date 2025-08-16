@@ -5,13 +5,6 @@
       "release-type": "java",
       "include-component-in-tag": true,
       "component": "bobapp-back",
-      "extra-files": [
-        {
-          "type": "xml",
-          "path": "pom.xml",
-          "xpath": "/project/version"
-        }
-      ],
       "snapshot": false,
       "separate-pull-requests": false
     }

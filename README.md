@@ -165,7 +165,7 @@ Les images Docker back et front sont aussi publiées lors des tags créés par r
 - `:latest`
 - `:X.Y.Z` (tag de version issu du tag Git)
 
-Workflow: `.github/workflows/publish-docker-on-tag.yml`
+Workflow: `.github/workflows/release-please-backend.yml` et `.github/workflows/release-please-frontend.yml`
 
 Exemples de pull:
 - Backend: `docker pull cpierres/bobapp-back:1.2.3`

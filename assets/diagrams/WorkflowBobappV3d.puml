@@ -1,0 +1,130 @@
+@startuml "BobApp - Workflow V3 (CI/CD + Versioning + Commentaires)"
+
+skinparam {
+  BackgroundColor white
+  ArrowColor #2C3E50
+  BorderColor #34495E
+  NodeBackgroundColor #ECF0F1
+  NodeBorderColor #7F8C8D
+  ActorBorderColor #2980B9
+  ActorBackgroundColor #3498DB
+  NoteBackgroundColor #F1C40F
+  NoteBorderColor #F39C12
+}
+
+actor "Développeur" as Dev
+participant "Branche Feature" as Feature
+participant "Pull Request" as PR
+participant "GitHub ActionsBackend CI" as BCI
+participant "GitHub ActionsFrontend CI" as FCI
+participant "Branche Main" as Main
+participant "Release-pleaseBackend" as RPBack
+participant "Release-pleaseFrontend" as RPFront
+database "Tags & ReleasesGitHub" as Tags
+participant "Release-please* Docker" as TagWF
+participant "Docker Hub(bobapp-backend / bobapp-frontend)" as DH
+
+note right of Main
+  La branche main est protégée (PR + approbations).
+  Les workflows back/front se déclenchent sur PR,
+  push main et workflow-test-*.
+end note
+
+Dev -> Feature : 1. Créer une branche feature
+activate Feature
+Dev -> Feature : 2. Développer & commit
+Dev -> Feature : 3. Push vers le dépôt
+
+Dev -> PR : 4. Ouvrir une Pull Request
+activate PR
+
+PR -> BCI : 5a. Déclencher Backend CI (PR)
+activate BCI
+note right of BCI
+  - JDK 11: build + tests (bloquants)
+  - Artefacts: classes + JaCoCo
+  - JDK 17: analyse Sonar (non bloquante)
+  - Docker (PR preview): build/push si tests OK
+    Tags: cpierres/bobapp-backend:   • pr-<PR_NUMBER>  • pr-<PR_NUMBER>-<SHORT_SHA>
+  - Commentaire PR avec commandes pull + lien Docker Hub
+end note
+
+BCI --> DH : 6a. Publier images preview backend
+BCI --> PR : 7a. Commenter la PR (backend: pull tags + lien)
+deactivate BCI
+
+PR -> FCI : 5b. Déclencher Frontend CI (PR)
+activate FCI
+note right of FCI
+  - Node 14: tests + coverage (bloquants)
+  - Artefact: coverage/lcov.info
+  - Sonar (non bloquant)
+  - Docker (PR preview): build/push si tests OK
+    Tags: cpierres/bobapp-frontend:  • pr-<PR_NUMBER>   • pr-<PR_NUMBER>-<SHORT_SHA>
+  - Commentaire PR avec commandes pull + lien Docker Hub
+end note
+
+FCI --> DH : 6b. Publier images preview frontend
+FCI --> PR : 7b. Commenter la PR (frontend: pull tags + lien)
+deactivate FCI
+
+note right of PR
+  Avant merge PR:
+  - Review Code Owners
+  - Status checks requis OK
+  - Sonar visible mais non bloquant
+end note
+
+PR -> Main : 8. Merge après approbation
+deactivate PR
+activate Main
+
+Main -> BCI : 9a. Déclenchement Backend CI (push main)
+Main -> FCI : 9b. Déclenchement Frontend CI (push main)
+
+' ---- Release Please (BACK) -> images versionnées bobapp-backend ----
+Main -> RPBack : 10a. Déclenche Release-please Backend (post-CI)
+activate RPBack
+note right of RPBack
+  - Ouvre/actualise PR de release backend
+  - Au merge: crée tag bobapp-back-vX.Y.Z et Release
+  - Construit & pousse images Docker (backend):    cpierres/bobapp-backend:latest    cpierres/bobapp-backend:X.Y.Z
+  - Commente la PR de release avec les commandes pull + lien Docker Hub
+end note
+RPBack --> DH : 11a. Publier images backend latest + X.Y.Z
+RPBack --> PR : 12a. Commentaire sur PR de release (backend)
+deactivate RPBack
+
+' ---- Release Please (FRONT) -> images versionnées bobapp-frontend ----
+Main -> RPFront : 10b. Déclenche Release-please Frontend (post-CI)
+activate RPFront
+note right of RPFront
+  - Ouvre/actualise PR de release frontend
+  - Au merge: crée tag bobapp-frontend-vX.Y.Z et Release
+  - Construit & pousse images Docker (frontend):    cpierres/bobapp-frontend:latest    cpierres/bobapp-frontend:X.Y.Z
+  - Commente la PR de release avec les commandes pull + lien Docker Hub
+end note
+RPFront --> DH : 11b. Publier images frontend latest + X.Y.Z
+RPFront --> PR : 12b. Commentaire sur PR de release (frontend)
+deactivate RPFront
+
+' ---- Publication par Tags (bobapp-back / bobapp-front) ----
+Tags -> TagWF : 13. Déclenchement workflow tag
+activate TagWF
+note right of TagWF
+  Déclencheurs:
+  - si release-please a réellement créé la release (après merge de la PR “autorelease”)
+  Comportement:
+  - Détermine composant (back/front) et version (X.Y.Z)
+  - Construit depuis ./back ou ./front
+  - Pousse vers Docker Hub :  cpierres/bobapp-backend:latest, :X.Y.Z
+  - Ajoute labels OCI (source, revision, version)
+end note
+TagWF --> DH : 14. Publier images versionnées back/front
+
+' ---- Rappels et branches de test ----
+note across
+  Branches de test CI: workflow-test-*  - Permettent de tester YAML/paramètres par push  - Sans PR/merge immédiat
+end note
+
+@enduml

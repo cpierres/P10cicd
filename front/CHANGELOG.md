@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.2.0](https://github.com/cpierres/P10cicd/compare/bobapp-frontend-v2.1.5...bobapp-frontend-v2.2.0) (2025-08-17)
+
+
+### Features
+
+* **front:** Ajout de la possibilité de tchatter entre blagueurs ([#149](https://github.com/cpierres/P10cicd/issues/149)) ([7599a28](https://github.com/cpierres/P10cicd/commit/7599a2896c0869d5aae443f50dc7cdda13992735))
+
+
+### Bug Fixes
+
+* **frontend:** Impossible de poster une suggestion de blague, le bouton tourne et fait planter le navigateur ([#145](https://github.com/cpierres/P10cicd/issues/145)) ([3633b56](https://github.com/cpierres/P10cicd/commit/3633b5689544919bc7e9c24ec076d19e28bc7c6b))
+
 ## [2.1.5](https://github.com/cpierres/P10cicd/compare/bobapp-frontend-v2.1.4...bobapp-frontend-v2.1.5) (2025-08-15)
 
 

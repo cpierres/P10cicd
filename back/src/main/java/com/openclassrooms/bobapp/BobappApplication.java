@@ -11,7 +11,7 @@ public class BobappApplication {
 
     public static void main(String[] args) {
         logger.info("Starting BobApp Backend... test 2238 feat !");
-        logger.info("ceci est la feature de possibilité de tchatter entre blagueurs");
+        logger.info("ceci est la feature de possibilité de tchatter entre blagueurs (branche front-feat-add-tchat");
         SpringApplication.run(BobappApplication.class, args);
     }
 }

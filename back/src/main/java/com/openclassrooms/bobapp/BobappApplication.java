@@ -11,7 +11,8 @@ public class BobappApplication {
 
     public static void main(String[] args) {
         logger.info("Starting BobApp Backend... test 2238 feat !");
-        logger.info("ceci est la feature de possibilité de tchatter entre blagueurs (branche front-feat-add-tchat");
+        logger.info("Erreur commit de PR 147 : fatigué ... je croyais faire la modification ci-dessous sur le front alors que j'étais sur le projet back ...");
+        logger.info("ERREUR (ne pas tenir compte) : ceci est la feature de possibilité de tchatter entre blagueurs (branche front-feat-add-tchat");
         SpringApplication.run(BobappApplication.class, args);
     }
 }

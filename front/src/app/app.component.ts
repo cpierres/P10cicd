@@ -19,6 +19,7 @@ export class AppComponent implements OnInit {
     console.log("fix du bug : Impossible de poster une suggestion de blague, le bouton tourne et fait planter mon navigateur");
     console.log("Ceci est la feature de possibilité de tchatter entre blagueurs (branche front-feat-add-tchat")
     console.log("the breaking change 4 est là !")
+    console.log("pseudo amélioration de la gestion d'erreurs");
     this.getRandomJoke();
   }
 

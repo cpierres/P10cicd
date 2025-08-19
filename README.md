@@ -47,6 +47,12 @@ SonarQube sera disponible à l'adresse :
 
 > **Note importante** : L'utilisation du paramètre `-p` (nom de projet) permet d'isoler complètement les différentes stacks et d'éviter tout conflit entre elles, même si elles sont exécutées simultanément.
 
+### Accès public SonarQube
+
+L’instance SonarQube de l’équipe, accessible depuis Internet :
+- https://sonarqube.cpierres.dscloud.me/
+
+
 ## Manual Setup
 
 ### Front-end 

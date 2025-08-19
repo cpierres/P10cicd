@@ -10,8 +10,6 @@ public class BobappApplication {
     private static final Logger logger = LoggerFactory.getLogger(BobappApplication.class);
 
     public static void main(String[] args) {
-        logger.info("Starting BobApp Backend... test 2238 feat !");
-        logger.info("Pseudo amélioration de la gestion des erreurs");
         SpringApplication.run(BobappApplication.class, args);
     }
 }

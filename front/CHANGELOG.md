@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.0](https://github.com/cpierres/P10cicd/compare/bobapp-frontend-v2.2.0...bobapp-frontend-v2.3.0) (2025-08-19)
+
+
+### Features
+
+* **front:** rétablissement code original pour retrouver résultats sonarqube ([#154](https://github.com/cpierres/P10cicd/issues/154)) ([9daf9fb](https://github.com/cpierres/P10cicd/commit/9daf9fbca81ee3faf2f89e428defd6f826efc7ca))
+
 ## [2.2.0](https://github.com/cpierres/P10cicd/compare/bobapp-frontend-v2.1.5...bobapp-frontend-v2.2.0) (2025-08-17)
 
 

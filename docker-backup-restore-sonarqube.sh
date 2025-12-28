@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Répertoire où les sauvegardes sont stockées
-BACKUP_DIR="/mnt/d/DockerVolumesBackup/sonar-stack/20250807"
+BACKUP_DIR="/mnt/n/DockerVolumesBackup/sonar-stack/20251228"
 
 # Vérification de l'existence du répertoire de sauvegarde
 if [[ ! -d "$BACKUP_DIR" ]]; then
@@ -11,10 +11,10 @@ fi
 
 # Liste des fichiers de sauvegarde attendus
 declare -A VOLUMES=(
-  [sonarqube_data]="sonarqube_data.tar.gz"
-  [sonarqube_logs]="sonarqube_logs.tar.gz"
-  [sonarqube_extensions]="sonarqube_extensions.tar.gz"
-  [postgresql]="postgresql.tar.gz"
+  [sonar_sonarqube_data]="sonarqube_data.tar.gz"
+  [sonar_sonarqube_logs]="sonarqube_logs.tar.gz"
+  [sonar_sonarqube_extensions]="sonarqube_extensions.tar.gz"
+  [sonar_postgresql]="postgresql.tar.gz"
 )
 
 # Fonction pour restaurer un volume
